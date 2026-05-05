@@ -22,6 +22,7 @@ const CartPage = () => {
       <div className="flex-1">
         <h3 className="text-sm font-medium">{product.title}</h3>
         <p className="font-bold">${product.price}</p>
+        <p>Qty: {product.quantity}</p>
       </div>
 
       <button
