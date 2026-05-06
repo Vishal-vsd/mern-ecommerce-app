@@ -8,6 +8,7 @@ const CartPage = () => {
     increaseQuantity,
     decreaseQuantity,
     getTotalPrice,
+    updateQuantity
   } = useContext(CartContext);
 
   if (cart.length === 0) {
@@ -63,9 +64,11 @@ const CartPage = () => {
                     −
                   </button>
 
-                  <span className="font-medium">
-                    {product.quantity}
-                  </span>
+                  <input type="number" 
+                         value={product.quantity}
+                         onChange={(e)=> updateQuantity(product.id, Number(e.target.value))}
+                         className="w-12 text-center border rounded"
+                  />
 
                   <button
                     onClick={() => increaseQuantity(product.id)}
