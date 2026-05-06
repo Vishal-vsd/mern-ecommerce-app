@@ -2,37 +2,43 @@ import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
 import { Link } from "react-router-dom";
 
-
 const ProductCard = ({ product }: any) => {
-  const {addToCart} = useContext(CartContext)
+  const { addToCart } = useContext(CartContext);
+
   return (
-      <div className="bg-white rounded-xl shadow-md p-4 hover:shadow-xl transition duration-300 flex flex-col">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 p-5 flex flex-col group">
 
-        <Link to= {`/product/${product.id}`}>
-            <img
-              src={product.image}
-              className="h-40 object-contain mb-4"
-            />
+      {/* Image */}
+      <Link to={`/product/${product.id}`}>
+        <div className="flex justify-center items-center h-44 mb-4 overflow-hidden">
+          <img
+            src={product.image}
+            alt={product.title}
+            className="h-full object-contain group-hover:scale-105 transition-transform duration-300"
+          />
+        </div>
 
-            <h3 className="text-sm font-semibold line-clamp-2">
-              {product.title}
-            </h3>
-        </Link>
+        {/* Title */}
+        <h3 className="text-sm font-medium text-gray-800 line-clamp-2 leading-tight">
+          {product.title}
+        </h3>
+      </Link>
 
+      {/* Price */}
+      <p className="text-xl font-semibold mt-3 text-gray-900">
+        ${product.price}
+      </p>
 
-        <p className="text-lg font-bold mt-2">
-          ${product.price}
-        </p>
+      {/* Button */}
+      <button
+        onClick={() => addToCart(product)}
+        className="mt-auto bg-black text-white py-2.5 rounded-xl hover:bg-gray-900 transition-all duration-300 tracking-wide text-sm"
+      >
+        Add to Cart
+      </button>
 
-        <button
-          onClick={() => addToCart(product)}
-          className="mt-auto bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition"
-        >
-          Add to Cart
-        </button>
-
-      </div>
+    </div>
   );
 };
 
-export default ProductCard
+export default ProductCard;

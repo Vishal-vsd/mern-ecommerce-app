@@ -2,22 +2,28 @@ import { useState, useEffect} from "react"
 import ProductCard from "./ProductCard";
 
 type ProductListProps = {
-    searchTerm: string
+    searchTerm: string,
+    category: string
+    sortOption: string
 }
 type Product = {
   id: number;
   title: string;
   price: number;
   image: string;
+  category: string;
 };
 
-const ProductList = ({searchTerm}: ProductListProps) => {
+const ProductList = ({searchTerm, category, sortOption}: ProductListProps) => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(false);
 
-    const filteredProduct = products.filter((product) => 
-        product.title.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    const filteredProducts = products.filter((product) => {
+       const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase())
+       const matchesCategory = category === "all" || product.category === category
+
+       return matchesSearch && matchesCategory
+})
 
     useEffect(()=>{
         const fetchProducts = async () => {
@@ -36,6 +42,14 @@ const ProductList = ({searchTerm}: ProductListProps) => {
         fetchProducts()
     }, [])
 
+    const sortedProducts = [...filteredProducts];
+    if(sortOption === "low"){
+        sortedProducts.sort((a,b)=> a.price - b.price)
+    } 
+    if(sortOption === "high"){
+        sortedProducts.sort((a,b)=> b.price - a.price)
+    }
+
     
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 py-6">
@@ -46,10 +60,10 @@ const ProductList = ({searchTerm}: ProductListProps) => {
                     ))}
                 </div>
              )}
-            {!loading && filteredProduct.map((product: any) => (
+            {!loading && sortedProducts.map((product) => (
                 <ProductCard key={product.id} product={product}/>
             ))}
-            {!loading && filteredProduct.length === 0 && (
+            {!loading && filteredProducts.length === 0 && (
                 <p className="col-span-full text-center text-gray-500">
                     No products found
                 </p>

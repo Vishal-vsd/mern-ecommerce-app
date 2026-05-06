@@ -8,13 +8,22 @@ import { useState } from "react";
 
 function App() {
   const [searchTerm, setSearchTerm] = useState(""); 
+  const [category, setCategory] = useState("all");
+  const [sortOption, setSortOption] = useState("default");
 
   return (
     <BrowserRouter>
-        <NavBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <NavBar 
+          searchTerm={searchTerm} 
+          setSearchTerm={setSearchTerm} 
+          category={category}
+          setCategory={setCategory}
+          sortOption={sortOption}
+          setSortOption={setSortOption}
+          />
         <Toaster position="top-right" />
         <Routes>
-         <Route path="/" element={<ProductList searchTerm={searchTerm}/>}></Route>
+         <Route path="/" element={<ProductList searchTerm={searchTerm} category={category} sortOption={sortOption}/>}></Route>
          <Route path="/cart" element={<CartPage/>}></Route>
          <Route path="/product/:id" element={<ProductDetail />}></Route>
         </Routes>
