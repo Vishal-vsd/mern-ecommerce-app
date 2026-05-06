@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const CartContext = createContext<any>(null);
 
@@ -11,7 +11,14 @@ type CartItem = {
 };
 
 const CartProvider = (({children} : any) => {
-    const [cart, setCart] = useState<CartItem[]>([]);
+    const [cart, setCart] = useState(() => {
+        const savedCart = localStorage.getItem("cart");
+        return savedCart ? JSON.parse(savedCart) : []
+    });
+
+    useEffect(()=> {
+        localStorage.setItem("cart", JSON.stringify(cart))
+    }, [cart])
 
     const addToCart = (product: any) => {
         setCart((prev: CartItem[]) => {
@@ -28,7 +35,7 @@ const CartProvider = (({children} : any) => {
     }
 
     const removeFromCart = (id: any) => {
-        setCart((prev) => prev.filter((item) => item.id !== id))
+        setCart((prev: CartItem[]) => prev.filter((item) => item.id !== id))
     }
 
     const increaseQuantity = (id: any) => {
@@ -42,7 +49,7 @@ const CartProvider = (({children} : any) => {
     }
 
     const decreaseQuantity = (id: any) => {
-        setCart((prev) => 
+        setCart((prev: CartItem[]) => 
             prev.map((item)=> 
             item.id === id
         ? {...item, quantity: item.quantity - 1}
@@ -52,7 +59,7 @@ const CartProvider = (({children} : any) => {
     }
 
     const getTotalPrice = () => {
-        return cart.reduce((total, item) => total + item.price * item.quantity, 0)
+        return cart.reduce((total: any, item: any) => total + item.price * item.quantity, 0)
     }
     return (
         <CartContext.Provider value= {{cart, addToCart, removeFromCart, increaseQuantity, decreaseQuantity, getTotalPrice}}> 
