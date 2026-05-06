@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
 
 const CartPage = () => {
-    const {cart, removeFromCart, getTotalPrice} = useContext(CartContext)
+    const {cart, removeFromCart, increaseQuantity, decreaseQuantity, getTotalPrice} = useContext(CartContext)
     return(
 <div className="p-6 max-w-4xl mx-auto">
   <h2 className="text-2xl font-bold mb-6">My Cart</h2>
@@ -22,7 +22,23 @@ const CartPage = () => {
       <div className="flex-1">
         <h3 className="text-sm font-medium">{product.title}</h3>
         <p className="font-bold">${product.price}</p>
-        <p>Qty: {product.quantity}</p>
+      <div className="flex items-center gap-2 mt-2">
+        <button
+          onClick={() => decreaseQuantity(product.id)}
+          className="bg-gray-300 px-2 rounded"
+        >
+          -
+        </button>
+
+        <span>{product.quantity}</span>
+
+        <button
+          onClick={() => increaseQuantity(product.id)}
+          className="bg-gray-300 px-2 rounded"
+        >
+          +
+        </button>
+</div>
       </div>
 
       <button
