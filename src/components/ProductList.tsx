@@ -1,9 +1,23 @@
 import { useState, useEffect} from "react"
 import ProductCard from "./ProductCard";
 
-const ProductList = () => {
-    const [products, setProducts] = useState([]);
+type ProductListProps = {
+    searchTerm: string
+}
+type Product = {
+  id: number;
+  title: string;
+  price: number;
+  image: string;
+};
+
+const ProductList = ({searchTerm}: ProductListProps) => {
+    const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(false);
+
+    const filteredProduct = products.filter((product) => 
+        product.title.toLowerCase().includes(searchTerm.toLowerCase())
+    )
 
     useEffect(()=>{
         const fetchProducts = async () => {
@@ -21,6 +35,7 @@ const ProductList = () => {
 
         fetchProducts()
     }, [])
+
     
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 py-6">
@@ -31,9 +46,14 @@ const ProductList = () => {
                     ))}
                 </div>
              )}
-            {!loading && products.map((product: any) => (
+            {!loading && filteredProduct.map((product: any) => (
                 <ProductCard key={product.id} product={product}/>
             ))}
+            {!loading && filteredProduct.length === 0 && (
+                <p className="col-span-full text-center text-gray-500">
+                    No products found
+                </p>
+                )}
         </div>
     )
 }
