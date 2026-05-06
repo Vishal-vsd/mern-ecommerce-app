@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
-
+import { Link } from "react-router-dom";
 
 
 const ProductCard = ({ product }: any) => {
@@ -8,14 +8,17 @@ const ProductCard = ({ product }: any) => {
   return (
       <div className="bg-white rounded-xl shadow-md p-4 hover:shadow-xl transition duration-300 flex flex-col">
 
-        <img
-          src={product.image}
-          className="h-40 object-contain mb-4"
-        />
+        <Link to= {`/product/${product.id}`}>
+            <img
+              src={product.image}
+              className="h-40 object-contain mb-4"
+            />
 
-        <h3 className="text-sm font-semibold line-clamp-2">
-          {product.title}
-        </h3>
+            <h3 className="text-sm font-semibold line-clamp-2">
+              {product.title}
+            </h3>
+        </Link>
+
 
         <p className="text-lg font-bold mt-2">
           ${product.price}
