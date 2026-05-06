@@ -8,7 +8,6 @@ const ProductCard = ({ product }: any) => {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 p-5 flex flex-col group">
 
-      {/* Image */}
       <Link to={`/product/${product.id}`}>
         <div className="flex justify-center items-center h-44 mb-4 overflow-hidden">
           <img
@@ -18,18 +17,15 @@ const ProductCard = ({ product }: any) => {
           />
         </div>
 
-        {/* Title */}
         <h3 className="text-sm font-medium text-gray-800 line-clamp-2 leading-tight">
           {product.title}
         </h3>
       </Link>
 
-      {/* Price */}
       <p className="text-xl font-semibold mt-3 text-gray-900">
         ${product.price}
       </p>
 
-      {/* Button */}
       <button
         onClick={() => addToCart(product)}
         className="mt-auto bg-black text-white py-2.5 rounded-xl hover:bg-gray-900 transition-all duration-300 tracking-wide text-sm"
