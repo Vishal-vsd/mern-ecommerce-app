@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import { Link } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 
 const CartPage = () => {
@@ -105,9 +106,11 @@ const CartPage = () => {
             <span>${getTotalPrice().toFixed(2)}</span>
           </div>
 
-          <button className="w-full bg-black text-white py-3 rounded-xl hover:bg-gray-900 transition">
-            Checkout
-          </button>
+          <Link to="/checkout">
+            <button className="mt-4 bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition">
+              Proceed to Checkout
+            </button>
+          </Link>
 
         </div>
 
