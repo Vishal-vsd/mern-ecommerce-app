@@ -121,4 +121,51 @@ const loginUser = async(req, res) => {
     }
 }
 
-module.exports = {registerUser, loginUser}
+const logoutUser = async (req, res) => {
+    try {
+
+        res.cookie("token", "", {
+            httpOnly:true,
+            expiresIn: new Date(0)
+        })
+
+        res.status(200).json({
+            success: true,
+            message: "logged out successfully!"
+        })
+
+    } catch (error) {
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+
+    }
+}
+
+const getCurrentUser = async(req, res) => {
+    try {
+        
+        const user = await User.findById(req.user).select("-password");
+
+        if(!user){
+            return res.status(404).json({
+                success: false,
+                message: "user not found"
+            })
+        }
+        
+        res.status(200).json({
+            success: true,
+            user
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+module.exports = {registerUser, loginUser, logoutUser, getCurrentUser}
