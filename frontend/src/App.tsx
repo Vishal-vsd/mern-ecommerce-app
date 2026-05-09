@@ -5,6 +5,8 @@ import NavBar from "./components/NavBar";
 import CartPage from "./components/CartPage";
 import ProductDetail from "./components/ProductDetail";
 import { useState } from "react";
+import LoginPage from "./components/LoginPage";
+import RegisterPage from "./components/RegisterPage";
 
 function App() {
   const [searchTerm, setSearchTerm] = useState(""); 
@@ -25,6 +27,8 @@ function App() {
         <Routes>
          <Route path="/" element={<ProductList searchTerm={searchTerm} category={category} sortOption={sortOption}/>}></Route>
          <Route path="/cart" element={<CartPage/>}></Route>
+         <Route path="/login" element={<LoginPage />}></Route>
+         <Route path="/register" element={<RegisterPage />}></Route>
          <Route path="/product/:id" element={<ProductDetail />}></Route>
         </Routes>
     </BrowserRouter>
