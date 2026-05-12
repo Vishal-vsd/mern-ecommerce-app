@@ -5,7 +5,7 @@ import { CartContext } from "../context/CartContext";
 
 const CheckoutPage = () => {
 
-    const {cart, getTotalPrice, clearCart} = useContext(CartContext);
+    const {cart, getTotalPrice} = useContext(CartContext);
 
     const {user} = useContext(AuthContext);
 
@@ -22,60 +22,18 @@ const CheckoutPage = () => {
     const [city, setCity] = useState("");
     const [phone, setPhone] = useState("");
 
-    const handlePlaceOrder = async () => {
-
-  try {
-
-    const res = await fetch(
-      "http://localhost:3000/api/orders/create",
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        credentials: "include",
-
-        body: JSON.stringify({
-
-          products: cart.map((item: any) => ({
-            productId: item.id,
-            title: item.title,
-            price: item.price,
-            quantity: item.quantity,
-            image: item.image,
-          })),
-
+    const handleContinuePayment = () => {
+      navigate("/payment", {
+        state: {
           shippingInfo: {
             fullName,
             address,
             city,
-            phone,
-          },
-
-          totalPrice: getTotalPrice(),
-        }),
-      }
-    );
-
-    const data = await res.json();
-
-    if (data.success) {
-      clearCart()
-      navigate("/success");
-    } else {
-
-      alert(data.message);
-
+            phone
+          }
+        }
+      })
     }
-
-  } catch (error) {
-
-    console.log(error);
-
-  }
-};
 
 
 return (
@@ -179,10 +137,10 @@ return (
           </div>
 
           <button
-            onClick={handlePlaceOrder}
+            onClick={handleContinuePayment}
             className="w-full mt-6 bg-black text-white py-3 rounded-2xl hover:bg-gray-800 transition"
           >
-            Place Order
+            Continue to Payment
           </button>
 
         </div>
