@@ -5,7 +5,7 @@ import { CartContext } from "../context/CartContext";
 
 const CheckoutPage = () => {
 
-    const {cart, getTotalPrice} = useContext(CartContext);
+    const {cart, getTotalPrice, clearCart} = useContext(CartContext);
 
     const {user} = useContext(AuthContext);
 
@@ -62,9 +62,8 @@ const CheckoutPage = () => {
     const data = await res.json();
 
     if (data.success) {
-
+      clearCart()
       navigate("/success");
-
     } else {
 
       alert(data.message);

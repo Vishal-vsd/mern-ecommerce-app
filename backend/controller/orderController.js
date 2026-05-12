@@ -24,4 +24,22 @@ const createOrder = async(req, res) => {
     }
 }
 
-module.exports = { createOrder }
+const getMyOrders = async (req, res) => {
+    try {
+        const orders = await Order.find({
+            user: req.user,
+        }).sort({createdAt: -1})
+
+        res.status(200).json({
+            success: true,
+            orders
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+module.exports = { createOrder, getMyOrders }
