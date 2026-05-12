@@ -3,6 +3,7 @@ require("dotenv").config();
 const cors = require("cors");
 const cookieParser = require("cookie-parser")
 const authRoutes = require("./routes/authRoutes.js")
+const orderRoutes = require("./routes/orderRoutes.js")
 const protect = require("./middleware/protect.js")
 
 const connectDB = require("./config/db.js")
@@ -23,17 +24,9 @@ app.use(express.json())
 app.get("/", (req, res) => {
     res.send("API running...")
 })
-app.get("/protected", protect, (req, res) => {
-
-  res.json({
-    success: true,
-    message: "Protected route accessed",
-    userId: req.user,
-  });
-
-});
 
 app.use("/api/auth", authRoutes);
+app.use("/api/orders", orderRoutes)
 
 const PORT = process.env.PORT || 3000;
 

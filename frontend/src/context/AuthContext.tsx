@@ -12,7 +12,7 @@ const AuthProvider = ({children}: any) => {
 
             try {
                 const res = await fetch(
-                "http://127.0.0.1:3000/api/auth/me",
+                "http://localhost:3000/api/auth/me",
                 {credentials: "include"}
                 );
 

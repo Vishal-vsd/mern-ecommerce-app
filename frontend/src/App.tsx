@@ -8,6 +8,7 @@ import { useState } from "react";
 import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 import CheckoutPage from "./components/CheckoutPage";
+import OrderSuccessPage from "./components/SuccessPage";
 
 function App() {
   const [searchTerm, setSearchTerm] = useState(""); 
@@ -29,6 +30,7 @@ function App() {
          <Route path="/" element={<ProductList searchTerm={searchTerm} category={category} sortOption={sortOption}/>}></Route>
          <Route path="/cart" element={<CartPage/>}></Route>
          <Route path="/checkout" element={<CheckoutPage/>}></Route>
+         <Route path="/success" element={<OrderSuccessPage />}></Route>
          <Route path="/login" element={<LoginPage />}></Route>
          <Route path="/register" element={<RegisterPage />}></Route>
          <Route path="/product/:id" element={<ProductDetail />}></Route>

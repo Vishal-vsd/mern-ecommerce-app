@@ -22,10 +22,61 @@ const CheckoutPage = () => {
     const [city, setCity] = useState("");
     const [phone, setPhone] = useState("");
 
-    const handlePlaceOrder = () => {
-        alert("Order placed successfully!");
-        navigate("/success")
+    const handlePlaceOrder = async () => {
+
+  try {
+
+    const res = await fetch(
+      "http://localhost:3000/api/orders/create",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        credentials: "include",
+
+        body: JSON.stringify({
+
+          products: cart.map((item: any) => ({
+            productId: item.id,
+            title: item.title,
+            price: item.price,
+            quantity: item.quantity,
+            image: item.image,
+          })),
+
+          shippingInfo: {
+            fullName,
+            address,
+            city,
+            phone,
+          },
+
+          totalPrice: getTotalPrice(),
+        }),
+      }
+    );
+
+    const data = await res.json();
+
+    if (data.success) {
+
+      navigate("/success");
+
+    } else {
+
+      alert(data.message);
+
     }
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+};
 
 
 return (
