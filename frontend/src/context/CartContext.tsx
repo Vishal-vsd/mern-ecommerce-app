@@ -22,14 +22,7 @@ const CartProvider = (({children} : any) => {
 
             try {
 
-            // no logged in user
-            if (!user) {
-
-                setCart([]);
-
-                return;
-
-            }
+            if (user) {
 
             const res = await fetch(
                 "http://localhost:3000/api/cart",
@@ -42,8 +35,21 @@ const CartProvider = (({children} : any) => {
 
             if (data.success) {
 
-                setCart(data.cart || []);
+                setCart(
+                    Array.isArray(data.cart)
+                    ? data.cart
+                    : []
+                
+                );
+            } 
 
+            } else {
+
+                const guestCart = JSON.parse(
+                    localStorage.getItem("guestCart") || "[]"
+                )
+
+                setCart(guestCart);
             }
 
             } catch (error) {
@@ -58,40 +64,104 @@ const CartProvider = (({children} : any) => {
         }, [user]);
 
     const addToCart = async (product: any) => {
-        try {
 
-            const res = await fetch("http://localhost:3000/api/cart/add",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-type": "application/json"
-                    }, 
-                    credentials: "include",
+        if(user) {        
+            
+                try {
 
-                    body: JSON.stringify({
+                const res = await fetch("http://localhost:3000/api/cart/add",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-type": "application/json"
+                        }, 
+                        credentials: "include",
+
+                        body: JSON.stringify({
+                            productId: product.id,
+                            title: product.title,
+                            price: product.price,
+                            image: product.image
+                        })
+                    }
+                )
+
+                const data = await res.json()
+                console.log(data)
+
+                if(data.success){
+                    setCart(data.cart || []);
+                    toast.success("Added to cart")
+                }
+
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            const guestCart = JSON.parse(
+                localStorage.getItem("guestCart") || "[]"
+            )
+
+            const existingProduct = 
+            guestCart.find((item: any) => item.productId === product.id)
+
+            if(existingProduct){
+                existingProduct.quantity += 1
+            } else {
+                    guestCart.push({
                         productId: product.id,
                         title: product.title,
                         price: product.price,
-                        image: product.image
+                        image: product.image,
+                        quantity:  1
                     })
-                }
+                 }
+
+            localStorage.setItem("guestCart", JSON.stringify(guestCart))
+
+            setCart(guestCart);
+
+            toast.success("Added to Cart")
+        }
+
+    }
+    
+
+    const removeFromCart = async (id: any) => {
+
+        if(user) {
+            try {
+                    const res = await fetch(`http://localhost:3000/api/cart/remove/${id}`,
+                        {
+                            method: "DELETE",
+                            credentials: "include"
+                        }
+                    )
+
+                    const data = await res.json();
+
+                    if(data.success) {
+
+                        setCart(data.cart || []);
+
+                        toast.success("Removed from Cart");
+                    }
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            const guestCart = JSON.parse(localStorage.getItem("guestCart") || "[]")
+
+            const updatedCart = guestCart.filter(
+                (item: any) => item.productId !== id
             )
 
-            const data = await res.json()
-            console.log(data)
+            localStorage.setItem("guestCart", JSON.stringify(updatedCart))
 
-            if(data.success){
-                setCart(data.cart || []);
-                toast.success("Added to cart")
-            }
+            setCart(updatedCart);
 
-        } catch (error) {
-            console.log(error)
+            toast.success("Removed from Cart")
         }
-    }
-
-    const removeFromCart = (id: any) => {
-        setCart((prev: CartItem[]) => prev.filter((item) => item.id !== id))
     }
 
     const clearCart = () => {

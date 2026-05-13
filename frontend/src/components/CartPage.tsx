@@ -81,7 +81,7 @@ const CartPage = () => {
               </div>
 
               <button
-                onClick={() => removeFromCart(product.id)}
+                onClick={() => removeFromCart(product.productId)}
                 className="text-sm text-red-500 hover:underline"
               >
                 Remove

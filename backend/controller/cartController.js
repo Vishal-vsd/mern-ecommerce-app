@@ -71,4 +71,31 @@ const addToCart = async(req, res) => {
     }
 }
 
-module.exports = {getCart, addToCart}
+const removeFromCart = async (req, res) => {
+    try {
+
+        const user = await User.findById(req.user);
+
+        const productId = Number(req.params.productId);
+
+        user.cart = user.cart.filter(
+            (item) => item.productId !== productId
+        )
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            cart: user.cart
+        })
+
+    } catch (error) {
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+module.exports = {getCart, addToCart, removeFromCart}
