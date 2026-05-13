@@ -7,11 +7,11 @@ import AuthProvider from './context/AuthContext.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <CartProvider>
-      <AuthProvider>
-        <App />
-      </AuthProvider>  
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+          <App /> 
+      </CartProvider>
+    </AuthProvider> 
   </StrictMode>
 
 )

@@ -1,10 +1,11 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, useContext} from "react";
+import { AuthContext } from "./AuthContext";
 import toast from "react-hot-toast";
 
 export const CartContext = createContext<any>(null);
 
 type CartItem = {
-  id: number;
+  productId: number;
   title: string;
   price: number;
   image: string;
@@ -12,29 +13,81 @@ type CartItem = {
 };
 
 const CartProvider = (({children} : any) => {
-    const [cart, setCart] = useState(() => {
-        const savedCart = localStorage.getItem("cart");
-        return savedCart ? JSON.parse(savedCart) : []
-    });
+    const [cart, setCart] = useState<CartItem[]>([]);
+    const { user } = useContext(AuthContext);
 
-    useEffect(()=> {
-        localStorage.setItem("cart", JSON.stringify(cart))
-    }, [cart])
+        useEffect(() => {
 
-    const addToCart = (product: any) => {
-        setCart((prev: CartItem[]) => {
-            const existingProduct = prev.find((item: any)=> item.id === product.id);
-            if(existingProduct){
-                return prev.map((item: any)=> 
-                item.id === product.id
-                ? {...item, quantity: item.quantity + 1}
-                : item
-                )
+        const fetchCart = async () => {
+
+            try {
+
+            // no logged in user
+            if (!user) {
+
+                setCart([]);
+
+                return;
+
             }
 
-            return [...prev, {...product, quantity: 1}]
-        })
-              toast.success("Added to Cart")
+            const res = await fetch(
+                "http://localhost:3000/api/cart",
+                {
+                credentials: "include",
+                }
+            );
+
+            const data = await res.json();
+
+            if (data.success) {
+
+                setCart(data.cart || []);
+
+            }
+
+            } catch (error) {
+
+            console.log(error);
+
+            }
+        };
+
+        fetchCart();
+
+        }, [user]);
+
+    const addToCart = async (product: any) => {
+        try {
+
+            const res = await fetch("http://localhost:3000/api/cart/add",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json"
+                    }, 
+                    credentials: "include",
+
+                    body: JSON.stringify({
+                        productId: product.id,
+                        title: product.title,
+                        price: product.price,
+                        image: product.image
+                    })
+                }
+            )
+
+            const data = await res.json()
+            console.log(data)
+
+            if(data.success){
+                setCart(data.cart || []);
+                toast.success("Added to cart")
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     const removeFromCart = (id: any) => {

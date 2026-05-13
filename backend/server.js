@@ -4,6 +4,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser")
 const authRoutes = require("./routes/authRoutes.js")
 const orderRoutes = require("./routes/orderRoutes.js")
+const cartRoutes = require("./routes/cartRoutes.js")
 const protect = require("./middleware/protect.js")
 
 const connectDB = require("./config/db.js")
@@ -27,6 +28,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes)
+app.use("/api/cart", cartRoutes)
 
 const PORT = process.env.PORT || 3000;
 

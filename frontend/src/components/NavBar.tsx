@@ -25,7 +25,7 @@ const NavBar = ({
   setSortOption,
 }: NavBarProps) => {
 
-  const { cart } = useContext(CartContext);
+  const { cart , clearCart}  = useContext(CartContext);
 
   const { user, setUser } =
     useContext(AuthContext);
@@ -33,7 +33,7 @@ const NavBar = ({
   const [menuOpen, setMenuOpen] =
     useState(false);
 
-  const totalItems = cart.reduce(
+  const totalItems = (cart || []).reduce(
     (total: number, item: any) =>
       total + item.quantity,
     0
@@ -54,6 +54,8 @@ const NavBar = ({
       const data = await res.json();
 
       if (data.success) {
+        
+        clearCart()
         setUser(null);
       }
 
