@@ -139,39 +139,64 @@ const updateCartQuantity = async (req, res) => {
     }
 }
 
-const mergeCart = async (req, res) => {
-    try {
-        const user = await User.findById(req.user);
+const mergeCart = async (
+  req,
+  res
+) => {
 
-        const {guestCart} = req.body;
+  try {
 
-        guestCart.forEach((guestItem) => {
-            
-            const existingItem = await user.cart.find(
-                (item) => item.productId === guestItem.productId
-            )
+    const user =
+      await User.findById(
+        req.user
+      );
 
-            if(existingItem) {
-                existingItem.quantity += guestItem.quantity
-            } else {
-                user.cart.push(
-                    guestItem
-                )
-            }
+    const { guestCart } =
+      req.body;
 
-            await user.save();
+    guestCart.forEach(
+      (guestItem) => {
 
-            res.status(200).json({
-                success: true,
-                cart: user.cart
-            })
+        const existingItem =
+          user.cart.find(
+            (item) =>
+              item.productId ===
+              guestItem.productId
+          );
 
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        })
-    }
-}
-module.exports = {getCart, addToCart, removeFromCart, updateCartQuantity}
+        if (existingItem) {
+
+          existingItem.quantity +=
+            guestItem.quantity;
+
+        }
+
+        else {
+
+          user.cart.push(
+            guestItem
+          );
+
+        }
+
+      }
+    );
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      cart: user.cart,
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+
+  }
+};
+
+module.exports = {getCart, addToCart, removeFromCart, updateCartQuantity, mergeCart}

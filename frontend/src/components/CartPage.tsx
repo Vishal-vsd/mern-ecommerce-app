@@ -37,7 +37,7 @@ const CartPage = () => {
         <div className="md:col-span-2 space-y-4">
           {cart.map((product: any) => (
             <div
-              key={product.id}
+              key={product.productId}
               className="flex items-center gap-5 border border-gray-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition"
             >
 

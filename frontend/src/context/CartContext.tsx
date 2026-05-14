@@ -15,14 +15,12 @@ type CartItem = {
 const CartProvider = (({children} : any) => {
     const [cart, setCart] = useState<CartItem[]>([]);
     const { user } = useContext(AuthContext);
+       
+    const fetchCart = async (currentUser = user) => {
 
-        useEffect(() => {
+         try {
 
-        const fetchCart = async () => {
-
-            try {
-
-            if (user) {
+            if (currentUser) {
 
             const res = await fetch(
                 "http://localhost:3000/api/cart",
@@ -59,9 +57,11 @@ const CartProvider = (({children} : any) => {
             }
         };
 
+    useEffect(() => {
+
         fetchCart();
 
-        }, [user]);
+    }, [user]);
 
     const addToCart = async (product: any) => {
 
@@ -237,7 +237,19 @@ const CartProvider = (({children} : any) => {
         return cart.reduce((total: any, item: any) => total + item.price * item.quantity, 0)
     }
     return (
-        <CartContext.Provider value= {{cart, addToCart, removeFromCart, increaseQuantity, decreaseQuantity, updateQuantity, getTotalPrice, clearCart}}> 
+        <CartContext.Provider value= {
+            {
+                cart, 
+                addToCart, 
+                removeFromCart, 
+                increaseQuantity, 
+                decreaseQuantity, 
+                updateQuantity, 
+                getTotalPrice, 
+                clearCart, 
+                fetchCart
+            }
+         }> 
         {children}
         </CartContext.Provider>
     )

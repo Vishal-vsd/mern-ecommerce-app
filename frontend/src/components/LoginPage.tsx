@@ -1,10 +1,13 @@
 import { useState, useContext} from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { CartContext } from "../context/CartContext";
 
 const LoginPage = () => {
 
-    const {setUser} = useContext(AuthContext)
+    const {setUser} = useContext(AuthContext);
+    const {fetchCart} = useContext(CartContext);
+
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
@@ -30,6 +33,40 @@ const LoginPage = () => {
 
             if(data.success){
                 setUser(data.user)
+                
+                const guestCart = JSON.parse(
+                    localStorage.getItem("guestCart") || "[]"
+                )
+
+                if(guestCart.length > 0) {
+                    try {
+                        const mergeRes = await fetch("http://localhost:3000/api/cart/merge",
+                            {method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                credentials: "include",
+
+                                body: JSON.stringify({
+                                    guestCart
+                                })
+                            }
+                        )
+
+                        const mergeData = await mergeRes.json();
+
+                        if(mergeData.success){
+                            localStorage.removeItem("guestCart")
+                            await fetchCart(data.user)
+                        }
+
+
+                    } catch (error) {
+                        console.log(error)
+                    }
+                } else {
+                    await fetchCart(data.user)
+                }
                 navigate("/")
             } else {
                 alert(data.message)
