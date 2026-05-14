@@ -168,32 +168,69 @@ const CartProvider = (({children} : any) => {
         setCart([])
     }
 
-    const increaseQuantity = (id: any) => {
-        setCart((prev: CartItem[]) => 
-            prev.map((item)=> 
-                item.id===id
-            ? {...item, quantity: item.quantity +1 }
-            : item
-        )
-        )
-    }
+    const updateQuantity = async (id: number, quantity: number) => {
+        if(user) {
+            try {
 
-    const decreaseQuantity = (id: any) => {
-        setCart((prev: CartItem[]) => 
-            prev.map((item)=> 
-            item.id === id
-        ? {...item, quantity: item.quantity - 1}
-        : item
-    ).filter((item) => item.quantity > 0)
-        )
-    }
+                if (isNaN(quantity)) return;
 
-    const updateQuantity = (id: number, quantity: number) => {
-        if(quantity<=0) return
-        setCart((prev: CartItem[]) => 
-            prev.map((item) => 
-            item.id === id ? {...item, quantity} : item
+                if (quantity < 0) return;
+                
+                const res = await fetch(`http://localhost:3000/api/cart/update/${id}`,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        credentials: "include",
+
+                        body: JSON.stringify({
+                            quantity
+                        })
+                    }
+                )
+
+                const data = await res.json();
+
+                if(data.success){
+                    setCart(data.cart || [])
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            const guestCart = JSON.parse(
+                localStorage.getItem("guestCart") || "[]"
             )
+
+            const updatedCart = guestCart.map(
+                (item: any) => item.productId === id
+                ? {
+                    ...item,
+                    quantity
+                }
+                :item
+            ).filter(
+                (item: any) => item.quantity > 0
+            )
+            
+            localStorage.setItem("guestCart", JSON.stringify(updatedCart))
+
+            setCart(updatedCart)
+        }
+    }
+
+    const increaseQuantity = (id: number, currentQuantity: number)=> {
+        updateQuantity(
+            id,
+            currentQuantity + 1
+        )
+    }
+
+        const decreaseQuantity = (id: number, currentQuantity: number)=> {
+        updateQuantity(
+            id,
+            currentQuantity - 1
         )
     }
     const getTotalPrice = () => {

@@ -98,4 +98,80 @@ const removeFromCart = async (req, res) => {
     }
 }
 
-module.exports = {getCart, addToCart, removeFromCart}
+const updateCartQuantity = async (req, res) => {
+    try {
+        const user = await User.findById(req.user);
+
+        const productId = Number(req.params.productId);
+
+        const { quantity } = req.body;
+
+        const cartItem = user.cart.find(
+            (item) => item.productId === productId
+        )
+        if(!cartItem){
+            return res.status(404).json({
+                success: false,
+                message: "Product not found"
+            })
+        }
+
+        if(quantity <= 0){
+            user.cart = user.cart.filter(
+                (item) => item.productId !== productId
+            )
+        } else {
+            cartItem.quantity = quantity;
+        }
+
+        await user.save()
+
+        res.status(200).json({
+            success: true,
+            cart: user.cart
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+const mergeCart = async (req, res) => {
+    try {
+        const user = await User.findById(req.user);
+
+        const {guestCart} = req.body;
+
+        guestCart.forEach((guestItem) => {
+            
+            const existingItem = await user.cart.find(
+                (item) => item.productId === guestItem.productId
+            )
+
+            if(existingItem) {
+                existingItem.quantity += guestItem.quantity
+            } else {
+                user.cart.push(
+                    guestItem
+                )
+            }
+
+            await user.save();
+
+            res.status(200).json({
+                success: true,
+                cart: user.cart
+            })
+
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+module.exports = {getCart, addToCart, removeFromCart, updateCartQuantity}

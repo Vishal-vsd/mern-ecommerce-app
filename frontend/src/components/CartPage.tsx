@@ -59,7 +59,11 @@ const CartPage = () => {
 
                 <div className="flex items-center gap-3 mt-3">
                   <button
-                    onClick={() => decreaseQuantity(product.id)}
+                    onClick={() => decreaseQuantity(
+                      product.productId,
+                      product.quantity
+                      )
+                    }
                     className="w-8 h-8 flex items-center justify-center border rounded-md hover:bg-gray-100"
                   >
                     −
@@ -67,12 +71,17 @@ const CartPage = () => {
 
                   <input type="number" 
                          value={product.quantity}
-                         onChange={(e)=> updateQuantity(product.id, Number(e.target.value))}
+                         onChange={(e)=> updateQuantity(
+                          product.productId,
+                          Number(e.target.value))}
                          className="w-12 text-center border rounded"
                   />
 
                   <button
-                    onClick={() => increaseQuantity(product.id)}
+                    onClick={() => increaseQuantity(
+                      product.productId,
+                      product.quantity
+                    )}
                     className="w-8 h-8 flex items-center justify-center border rounded-md hover:bg-gray-100"
                   >
                     +
