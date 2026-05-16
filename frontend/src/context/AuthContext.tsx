@@ -35,7 +35,8 @@ const AuthProvider = ({children}: any) => {
         <AuthContext.Provider value={
        {    user,
             setUser,
-            loading
+            loading,
+            setLoading
         }}>
             {children}
         </AuthContext.Provider>

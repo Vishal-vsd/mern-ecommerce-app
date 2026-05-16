@@ -28,7 +28,7 @@ const ProductDetail = () => {
   const navigate = useNavigate();
 
   const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -40,7 +40,9 @@ const ProductDetail = () => {
         if (!res.ok) throw new Error("Failed to fetch");
 
         const data = await res.json();
+
         setProduct(data.product);
+
       } catch (error) {
         console.error("Error fetching product", error);
       } finally {
