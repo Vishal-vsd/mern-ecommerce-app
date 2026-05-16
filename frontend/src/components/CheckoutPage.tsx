@@ -2,39 +2,67 @@ import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { CartContext } from "../context/CartContext";
+import toast from "react-hot-toast";
 
 const CheckoutPage = () => {
 
     const {cart, getTotalPrice} = useContext(CartContext);
 
-    const {user} = useContext(AuthContext);
+    const {user, loading} = useContext(AuthContext);
 
     const navigate = useNavigate();
 
     useEffect(()=>{
-        if(!user){
+        if(!loading && !user){
             navigate("/login")
         }
-    }, [user])
+    }, [user, loading])
 
     const [fullName, setFullName] = useState("");
     const [address, setAddress] = useState("");
     const [city, setCity] = useState("");
     const [phone, setPhone] = useState("");
 
-    const handleContinuePayment = () => {
-      navigate("/payment", {
-        state: {
-          shippingInfo: {
+const handleContinuePayment = () => {
+
+   if (
+      !fullName ||
+      !address ||
+      !city ||
+      !phone
+   ) {
+
+      toast.error(
+         "Please fill all details"
+      );
+
+      return;
+   }
+
+   navigate("/payment", {
+      state: {
+         shippingInfo: {
             fullName,
             address,
             city,
             phone
-          }
-        }
-      })
-    }
+         }
+      }
+   });
+}
 
+    if (loading) {
+
+    return (
+        <div className="min-h-screen flex items-center justify-center">
+
+            <p className="text-lg font-medium">
+                Loading...
+            </p>
+
+        </div>
+    );
+}
 
 return (
   <div className="max-w-6xl mx-auto px-6 py-10">
@@ -109,7 +137,7 @@ return (
 
           {cart.map((item: any) => (
             <div
-              key={item.id}
+              key={item.productId}
               className="flex justify-between text-sm"
             >
               <span>
@@ -131,7 +159,7 @@ return (
             <span>Total</span>
 
             <span>
-              ${getTotalPrice().toFixed(2)}
+              ₹{getTotalPrice().toFixed(2)}
             </span>
 
           </div>

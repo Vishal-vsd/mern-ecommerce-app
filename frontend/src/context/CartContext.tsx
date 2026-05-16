@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 export const CartContext = createContext<any>(null);
 
 type CartItem = {
-  productId: number;
+  productId: string;
   title: string;
   price: number;
   image: string;
@@ -78,7 +78,7 @@ const CartProvider = (({children} : any) => {
                         credentials: "include",
 
                         body: JSON.stringify({
-                            productId: product.id,
+                            productId: product._id,
                             title: product.title,
                             price: product.price,
                             image: product.image
@@ -103,13 +103,13 @@ const CartProvider = (({children} : any) => {
             )
 
             const existingProduct = 
-            guestCart.find((item: any) => item.productId === product.id)
+            guestCart.find((item: any) => item.productId === product._id)
 
             if(existingProduct){
                 existingProduct.quantity += 1
             } else {
                     guestCart.push({
-                        productId: product.id,
+                        productId: product._id,
                         title: product.title,
                         price: product.price,
                         image: product.image,
@@ -127,7 +127,7 @@ const CartProvider = (({children} : any) => {
     }
     
 
-    const removeFromCart = async (id: any) => {
+    const removeFromCart = async (id: string) => {
 
         if(user) {
             try {

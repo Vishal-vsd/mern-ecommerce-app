@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const User = require("../model/user")
 
 const protect = async( req, res, next ) => {
     try {
@@ -15,7 +16,9 @@ const protect = async( req, res, next ) => {
             process.env.JWT_SECRET_KEY
         )
 
-        req.user = decoded.id;
+        const user = await User.findById(decoded.id)
+
+        req.user = user
 
         next();
 

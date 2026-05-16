@@ -1,85 +1,162 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
+import { AuthContext } from "../context/AuthContext";
 
-const PayementPage = ()=> {
+const PayementPage = () => {
+
     const location = useLocation();
+
     const navigate = useNavigate();
-
-    const shippingInfo = location.state?.shippingInfo;
-
-    if(!shippingInfo){
-        navigate("/checkout");
-        return null;
-    }
 
     const { cart, getTotalPrice, clearCart } = useContext(CartContext);
 
+    const { user, loading } = useContext(AuthContext);
+
     const [processing, setProcessing] = useState(false);
 
+    const shippingInfo =
+        location.state?.shippingInfo;
+
+    useEffect(() => {
+
+        if (!loading && !user) {
+
+            navigate("/login");
+
+        }
+
+    }, [user, loading]);
+
+    useEffect(() => {
+
+        if (!shippingInfo) {
+
+            navigate("/checkout");
+
+        }
+
+    }, [shippingInfo]);
+
+    if (loading) {
+
+        return (
+
+            <div className="min-h-screen flex items-center justify-center">
+
+                <p className="text-lg font-medium">
+                    Loading...
+                </p>
+
+            </div>
+
+        );
+    }
+
+    if (!shippingInfo) {
+
+        return null;
+
+    }
+
     const handlePayment = async () => {
+        // debuggeramount: data.order.amount,
 
         try {
 
+
             setProcessing(true);
-
-            setTimeout(async () => {
-
-            try {
-
-                const res = await fetch(
-                "http://localhost:3000/api/orders/create",
+          
+            const res = await fetch("http://localhost:3000/api/payment/create-order",
                 {
                     method: "POST",
-
                     headers: {
-                    "Content-Type":
-                        "application/json",
+                        "Content-Type": "application/json"
                     },
-
                     credentials: "include",
 
                     body: JSON.stringify({
-
-                    products: cart.map(
-                        (item: any) => ({
-                        productId: item.id,
-                        title: item.title,
-                        quantity: item.quantity,
-                        price: item.price,
-                        image: item.image,
-                        })
-                    ),
-
-                    shippingInfo,
-
-                    totalPrice:
-                        getTotalPrice(),
-                    }),
+                        amount: getTotalPrice()
+                    })
                 }
-                );
+            )
 
-                const data = await res.json();
+            const data = await res.json();
 
-                if (data.success) {
-
-                clearCart();
-
-                navigate("/success");
-
-                }
-
-            } catch (error) {
-
-                console.log(error);
-
-            } finally {
+            if (!data.success) {
 
                 setProcessing(false);
+                return;
 
             }
 
-            }, 2000);
+            const options = {
+                key: "rzp_test_SpBbhOWTRku8pa",
+                amount: data.order.amount,
+                currency: data.order.currency,
+                name: "MyStore",
+                description: "Test Payment",
+                order_id: data.order.id,
+
+                handler: async function (response: any) {
+
+                    const orderRes = await fetch(
+                        "http://localhost:3000/api/orders/create",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json",
+                            },
+
+                            credentials: "include",
+
+                            body: JSON.stringify({
+
+                                products: cart.map(
+                                    (item: any) => ({
+                                        productId: item.productId,
+                                        title: item.title,
+                                        quantity: item.quantity,
+                                        price: item.price,
+                                        image: item.image,
+                                    })
+                                ),
+
+                                shippingInfo,
+
+                                totalPrice:
+                                    getTotalPrice(),
+                            }),
+                        }
+                    );
+
+                    const orderData = await orderRes.json()
+
+                    if (orderData.success) {
+                       
+                       await fetch(
+                            "http://localhost:3000/api/cart/clear",
+                            {
+                                method: "DELETE",
+                                credentials: "include"
+                            }
+                        );
+                        clearCart()
+                        navigate("/success")
+                    }
+                },
+                theme: {
+                    color: "#000000"
+                }
+            }  
+            //localStorage.clear();
+
+            const PaymentObject = new (window as any).Razorpay({...options,remember_customer:false})
+            PaymentObject.open()
+            setProcessing(false)
+
 
         } catch (error) {
 
@@ -89,76 +166,120 @@ const PayementPage = ()=> {
 
         }
     };
+
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 px-4">
+        <div className="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200 flex items-center justify-center px-4 py-10">
 
-            <div className="bg-white max-w-md w-full rounded-3xl shadow-2xl p-8 border border-gray-100">
+            <div className="w-full max-w-lg bg-white rounded-[32px] shadow-2xl border border-gray-100 overflow-hidden">
 
-            <h2 className="text-3xl font-bold text-center mb-2">
-                Payment
-            </h2>
+                {/* TOP HEADER */}
+                <div className="bg-black text-white px-8 py-7">
 
-            <p className="text-center text-gray-500 mb-8">
-                Complete your payment
-            </p>
+                    <h2 className="text-3xl font-bold">
+                        Secure Checkout
+                    </h2>
 
-            {/* Fake Card */}
-            <div className="space-y-4">
+                    <p className="text-gray-300 mt-2 text-sm">
+                        Complete your payment safely with Razorpay
+                    </p>
 
-                <input
-                type="text"
-                placeholder="Card Number"
-                className="w-full border border-gray-200 px-4 py-3 rounded-2xl outline-none focus:ring-2 focus:ring-black"
-                />
+                </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="p-8">
 
-                <input
-                    type="text"
-                    placeholder="MM/YY"
-                    className="w-full border border-gray-200 px-4 py-3 rounded-2xl outline-none focus:ring-2 focus:ring-black"
-                />
 
-                <input
-                    type="text"
-                    placeholder="CVV"
-                    className="w-full border border-gray-200 px-4 py-3 rounded-2xl outline-none focus:ring-2 focus:ring-black"
-                />
+                    {/* ORDER SUMMARY */}
+                    <div className="border border-gray-200 rounded-3xl p-5 mb-6">
+
+                        <h3 className="text-xl font-semibold mb-5">
+                            Order Summary
+                        </h3>
+
+                        <div className="space-y-4">
+
+                            {cart.map((item: any) => (
+
+                                <div
+                                    key={item.productId}
+                                    className="flex items-center justify-between"
+                                >
+
+                                    <div className="flex items-center gap-3">
+
+                                        <img
+                                            src={item.image}
+                                            alt={item.title}
+                                            className="w-14 h-14 object-contain bg-gray-50 rounded-xl p-2"
+                                        />
+
+                                        <div>
+
+                                            <p className="font-medium text-gray-800 line-clamp-1">
+                                                {item.title}
+                                            </p>
+
+                                            <p className="text-sm text-gray-500">
+                                                Qty: {item.quantity}
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                    <p className="font-semibold text-gray-900">
+                                        ₹
+                                        {(item.price * item.quantity).toFixed(2)}
+                                    </p>
+
+                                </div>
+
+                            ))}
+
+                        </div>
+
+                    </div>
+
+                    {/* TOTAL */}
+                    <div className="flex items-center justify-between mb-8">
+
+                        <div>
+
+                            <p className="text-gray-500 text-sm">
+                                Total Amount
+                            </p>
+
+                            <h2 className="text-3xl font-bold text-gray-900">
+                                ₹{getTotalPrice().toFixed(2)}
+                            </h2>
+
+                        </div>
+
+                        <div className="bg-green-100 text-green-700 px-4 py-2 rounded-2xl text-sm font-medium">
+                            Secure
+                        </div>
+
+                    </div>
+
+                    {/* BUTTON */}
+                    <button
+                        onClick={handlePayment}
+                        disabled={processing}
+                        className="w-full bg-black hover:bg-gray-800 text-white py-4 rounded-2xl font-semibold text-lg transition-all duration-300 disabled:opacity-50"
+                    >
+
+                        {processing
+                            ? "Processing..."
+                            : `Pay Securely ₹${getTotalPrice().toFixed(2)}`
+                        }
+
+                    </button>
 
                 </div>
 
             </div>
 
-            {/* Total */}
-            <div className="flex justify-between items-center mt-8 mb-6">
-
-                <span className="text-gray-600">
-                Total
-                </span>
-
-                <span className="text-2xl font-bold">
-                ${getTotalPrice().toFixed(2)}
-                </span>
-
-            </div>
-
-            {/* Button */}
-            <button
-                onClick={handlePayment}
-                disabled={processing}
-                className="w-full bg-black text-white py-3 rounded-2xl hover:bg-gray-800 transition disabled:opacity-50"
-            >
-
-                {processing
-                ? "Processing Payment..."
-                : "Pay Now"}
-
-            </button>
-
-            </div>
-
         </div>
-        );
+    );
 }
 
 export default PayementPage;

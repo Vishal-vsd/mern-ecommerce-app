@@ -3,13 +3,24 @@ import { useEffect, useState, useContext } from "react";
 import { CartContext } from "../context/CartContext";
 
 type Product = {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  image: string;
-  category: string;
-};
+
+ _id:string,
+
+ title:string,
+
+ price:number,
+
+ description:string,
+
+ image:string,
+
+ category:string,
+
+ discount:number,
+
+ stock:number
+
+}
 
 const ProductDetail = () => {
   const { addToCart } = useContext(CartContext);
@@ -25,11 +36,11 @@ const ProductDetail = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`https://fakestoreapi.com/products/${id}`);
+        const res = await fetch(`http://localhost:3000/api/products/${id}`);
         if (!res.ok) throw new Error("Failed to fetch");
 
         const data = await res.json();
-        setProduct(data);
+        setProduct(data.product);
       } catch (error) {
         console.error("Error fetching product", error);
       } finally {
@@ -56,6 +67,12 @@ const ProductDetail = () => {
     );
   }
 
+  const discountedPrice =
+    product.discount > 0
+      ? product.price -
+        (product.price * product.discount) / 100
+      : product.price;
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
 
@@ -68,7 +85,20 @@ const ProductDetail = () => {
 
       <div className="grid md:grid-cols-2 gap-12 items-center">
 
-        <div className="flex justify-center bg-gray-50 p-8 rounded-2xl">
+        <div className="relative flex justify-center bg-gray-50 p-8 rounded-2xl">
+          {
+
+            product.discount >0 && (
+
+            <span className=" absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm z-50">
+
+            {product.discount}% OFF
+
+            </span>
+
+            )
+
+            }
           <img
             src={product.image}
             alt={product.title}
@@ -91,8 +121,40 @@ const ProductDetail = () => {
           </p>
 
           <p className="text-3xl font-bold text-gray-900 mt-6">
-            ${product.price}
+            ₹{discountedPrice.toFixed(0)}
           </p>
+          {
+            product.discount >0 &&(
+
+            <p className="
+            line-through
+            text-gray-400">
+
+            ₹{product.price}
+
+            </p>
+
+            )
+
+            }
+            <p
+              className={`mt-3 text-sm font-medium
+              ${
+                product.stock === 0
+                  ? "text-red-500"
+                  : product.stock < 5
+                  ? "text-orange-500"
+                  : "text-green-600"
+              }`}
+            >
+              {
+                product.stock === 0
+                  ? "Out of stock"
+                  : product.stock < 5
+                  ? `Only ${product.stock} left`
+                  : "In stock"
+              }
+            </p>
 
           <button
             onClick={() => addToCart(product)}

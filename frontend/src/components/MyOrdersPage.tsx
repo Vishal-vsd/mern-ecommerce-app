@@ -144,7 +144,7 @@ const MyOrdersPage = () => {
             </p>
 
             <p className="text-lg font-semibold">
-              ${order.totalPrice}
+              ₹{order.totalPrice}
             </p>
 
           </div>

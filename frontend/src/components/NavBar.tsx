@@ -1,6 +1,7 @@
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
 
+import { useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 
 import { Link } from "react-router-dom";
@@ -26,6 +27,7 @@ const NavBar = ({
 }: NavBarProps) => {
 
   const { cart , clearCart}  = useContext(CartContext);
+  const navigate = useNavigate();
 
   const { user, setUser } =
     useContext(AuthContext);
@@ -57,6 +59,7 @@ const NavBar = ({
         
         clearCart()
         setUser(null);
+        navigate("/")
       }
 
     } catch (error) {

@@ -7,7 +7,7 @@ type ProductListProps = {
     sortOption: string
 }
 type Product = {
-  id: number;
+  _id: number;
   title: string;
   price: number;
   image: string;
@@ -29,9 +29,9 @@ const ProductList = ({searchTerm, category, sortOption}: ProductListProps) => {
         const fetchProducts = async () => {
             try {
                 setLoading(true)
-                const response = await fetch("https://fakestoreapi.com/products");
+                const response = await fetch("http://localhost:3000/api/products");
                 const data = await response.json();
-                setProducts(data);
+                setProducts(data.products);
             } catch (error) {
                 console.error("FETCH PRODUCTS ERROR", error)
             } finally {
@@ -61,7 +61,7 @@ const ProductList = ({searchTerm, category, sortOption}: ProductListProps) => {
                 </div>
              )}
             {!loading && sortedProducts.map((product) => (
-                <ProductCard key={product.id} product={product}/>
+                <ProductCard key={product._id} product={product}/>
             ))}
             {!loading && filteredProducts.length === 0 && (
                 <p className="col-span-full text-center text-gray-500">

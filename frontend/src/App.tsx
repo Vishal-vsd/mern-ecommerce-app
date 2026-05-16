@@ -27,7 +27,7 @@ function App() {
           sortOption={sortOption}
           setSortOption={setSortOption}
           />
-        <Toaster position="top-right" />
+        <Toaster position="top-center" />
         <Routes>
          <Route path="/" element={<ProductList searchTerm={searchTerm} category={category} sortOption={sortOption}/>}></Route>
          <Route path="/cart" element={<CartPage/>}></Route>

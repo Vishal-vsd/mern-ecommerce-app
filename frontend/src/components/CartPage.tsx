@@ -54,7 +54,7 @@ const CartPage = () => {
                 </h3>
 
                 <p className="text-lg font-semibold mt-1 text-gray-900">
-                  ${product.price}
+                  ₹{product.price}
                 </p>
 
                 <div className="flex items-center gap-3 mt-3">
@@ -112,7 +112,7 @@ const CartPage = () => {
 
           <div className="flex justify-between text-gray-600 mb-4">
             <span>Total</span>
-            <span>${getTotalPrice().toFixed(2)}</span>
+            <span>₹{getTotalPrice().toFixed(2)}</span>
           </div>
 
           <Link to="/checkout">

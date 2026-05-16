@@ -199,4 +199,26 @@ const mergeCart = async (
   }
 };
 
-module.exports = {getCart, addToCart, removeFromCart, updateCartQuantity, mergeCart}
+const clearCart = async (req,res) => {
+
+    try {
+        console.log(req.body);
+        const user = await User.findById(req.user);
+
+        user.cart = []
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            cart: []
+        }) 
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+module.exports = {getCart, addToCart, removeFromCart, updateCartQuantity, mergeCart, clearCart}

@@ -1,6 +1,6 @@
 const express = require("express");
 const protect = require("../middleware/protect");
-const { getCart, addToCart, removeFromCart, updateCartQuantity, mergeCart } = require("../controller/cartController");
+const { getCart, addToCart, removeFromCart, updateCartQuantity, mergeCart, clearCart } = require("../controller/cartController");
 const router = express.Router();
 
 
@@ -10,4 +10,5 @@ router.post("/add", protect, addToCart)
 router.delete("/remove/:productId", protect, removeFromCart)
 router.put("/update/:productId", protect, updateCartQuantity)
 router.post("/merge", protect, mergeCart)
+router.delete("/clear", protect, clearCart)
 module.exports = router
