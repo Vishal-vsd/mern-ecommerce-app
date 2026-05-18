@@ -44,7 +44,7 @@ const NavBar = ({
   const handleLogout = async () => {
 
     try {
-
+      
       const res = await fetch(
         "http://localhost:3000/api/auth/logout",
         {

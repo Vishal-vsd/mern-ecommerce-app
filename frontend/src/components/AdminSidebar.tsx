@@ -5,11 +5,42 @@ import {
     ShoppingBag,
     Users
 } from "lucide-react";
+import { AuthContext } from "../context/AuthContext";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Link }
 from "react-router-dom";
 
 const AdminSidebar = () => {
+
+    const {setUser} = useContext(AuthContext);
+    const navigate = useNavigate()
+
+    const handleLogout = async () => {
+        try {
+            const res = await fetch("http://localhost:3000/api/auth/logout",
+                {
+                    method: "POST",
+                    credentials: "include"
+                }
+            )
+
+            const data = await res.json();
+
+            if(data.success){
+                setUser(null);
+                navigate(
+                    "/login",
+                    {
+                        replace: true
+                    }
+                )
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
 return (
 
@@ -249,7 +280,7 @@ hover:text-red-500
 
 transition
 
-">
+" onClick={handleLogout}>
 
 <LogOut
 size={18}

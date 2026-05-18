@@ -2,6 +2,7 @@ import { useEffect, useContext} from "react";
 import { ProductContext } from "../../context/ProductContext";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const AdminProducts = () => {
     const {loading, products, fetchProducts} = useContext(ProductContext);
@@ -17,6 +18,30 @@ const AdminProducts = () => {
                 Loading...
             </div>
         )
+    }
+
+    const handleDelete = async(id:string)=> {
+        try {
+            const res = await fetch(`http://localhost:3000/api/products/delete/${id}`,
+                {
+                    method: "DELETE",
+                    credentials: "include"
+                }
+            )
+
+            const data = await res.json();
+
+            if(data.success){
+                toast.success("Deleted");
+                fetchProducts()
+            } else {
+                toast.error(
+                    data.message
+                )
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
     
 return(
@@ -233,7 +258,10 @@ bg-red-50
 
 text-red-500
 
-rounded-lg">
+rounded-lg"
+
+onClick={()=> handleDelete(product._id)}
+>
 
 Delete
 

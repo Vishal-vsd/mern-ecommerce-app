@@ -49,6 +49,11 @@ from "./layouts/AdminLayout";
 import AdminProducts 
 from "./pages/admin/AdminProducts";
 
+import AddProductPage from "./pages/admin/AddProductPage";
+
+import AdminRoutes from "./routes/AdminRoutes";
+
+
 
 
 function App() {
@@ -218,10 +223,12 @@ element={<ProductDetail/>}
 
 <Route
 
-path="/admin"
+path="admin"
 
 element={
-<AdminLayout/>
+  <AdminRoutes>
+    <AdminLayout/>
+  </AdminRoutes>
 }
 
 >
@@ -246,6 +253,9 @@ element={
 
 />
 
+<Route path="products/add" 
+element={<AddProductPage/>}
+/>
 </Route>
 
 

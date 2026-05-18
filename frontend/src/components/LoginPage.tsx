@@ -30,6 +30,7 @@ const LoginPage = () => {
                 }
             )
             const data = await res.json();
+            console.log(data.user)
 
             if(data.success){
                 setUser(data.user)
@@ -67,7 +68,13 @@ const LoginPage = () => {
                 } else {
                     await fetchCart(data.user)
                 }
-                navigate("/")
+
+                if(data.user.role === "admin"){
+                    navigate("/admin/dashboard");
+                }
+                 else {
+                    navigate("/")
+                }
             } else {
                 alert(data.message)
             }

@@ -37,7 +37,7 @@ const registerUser = async(req, res) => {
         const user = await User.create({
             name,
             email: normalizedEmail,
-            password: hashedPassword
+            password: hashedPassword,
         })
 
         const token = jwt.sign(
@@ -98,7 +98,7 @@ const loginUser = async(req, res) => {
                 message: "Incorrect password"
             })
         }
-
+        
         const token = jwt.sign(
             {id: user._id},
             process.env.JWT_SECRET_KEY,
@@ -118,7 +118,8 @@ const loginUser = async(req, res) => {
             user: {
                 _id: user._id,
                 name: user.name,
-                email: user.email
+                email: user.email,
+                role: user.role
             }
         })
 

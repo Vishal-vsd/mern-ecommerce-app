@@ -1,4 +1,5 @@
 const Product = require("../model/product");
+const User = require("../model/user")
 
 const getProducts = async (req,res) => {
     try {
@@ -127,4 +128,32 @@ const updateProduct = async (req,res) => {
     }
 }
 
-module.exports = { getProducts, getProductById, createProduct, updateProduct}
+const deleteProduct = async (req, res) => {
+    try {
+        const productId = req.params.productId;
+        const product = await Product.findById(productId)
+
+        if(!product) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not found"
+            })
+        }
+
+        await Product.findByIdAndDelete(productId);
+
+        res.status(200).json({
+            success: true,
+            message: "Product Deleted"
+        })
+
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+module.exports = { getProducts, getProductById, createProduct, updateProduct, deleteProduct}
