@@ -52,6 +52,7 @@ from "./pages/admin/AdminProducts";
 import AddProductPage from "./pages/admin/AddProductPage";
 
 import AdminRoutes from "./routes/AdminRoutes";
+import EditProductPage from "./pages/admin/EditProductPage";
 
 
 
@@ -255,6 +256,10 @@ element={
 
 <Route path="products/add" 
 element={<AddProductPage/>}
+/>
+
+<Route path="products/edit/:id" 
+element={<EditProductPage/>}
 />
 </Route>
 

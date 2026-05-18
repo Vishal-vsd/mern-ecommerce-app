@@ -1,3 +1,4 @@
+
 import {
     Package,
     ShoppingBag,
@@ -5,7 +6,37 @@ import {
 }
 from "lucide-react";
 
+import { useState, useEffect } from "react";
+
 const AdminDashboard = () => {
+
+    const [stats, setStats] = useState({
+        products: 0,
+        users: 0,
+        orders: 0
+    })
+
+    const fetchStats = async() => {
+        try {
+            const res = await fetch("http://localhost:3000/api/admin/stats",
+                {
+                    credentials: "include"
+                }
+            )
+
+            const data = await res.json();
+
+            if(data.success){
+                setStats(data)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(()=> {
+        fetchStats()
+    },[])
 
 return (
 
@@ -117,7 +148,9 @@ font-bold
 mt-6
 ">
 
-0
+{
+    stats.products
+}
 
 </p>
 
@@ -176,7 +209,9 @@ font-bold
 mt-6
 ">
 
-0
+{
+    stats.orders
+}
 
 </p>
 
@@ -235,7 +270,9 @@ font-bold
 mt-6
 ">
 
-0
+{
+    stats.users
+}
 
 </p>
 

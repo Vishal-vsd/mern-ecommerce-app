@@ -7,6 +7,7 @@ const orderRoutes = require("./routes/orderRoutes.js")
 const cartRoutes = require("./routes/cartRoutes.js")
 const paymentRoutes = require("./routes/paymentRoutes.js")
 const productRoutes = require("./routes/productRoutes.js")
+const adminRoutes = require("./routes/adminRoutes.js")
 
 const connectDB = require("./config/db.js")
 
@@ -32,6 +33,7 @@ app.use("/api/orders", orderRoutes)
 app.use("/api/cart", cartRoutes)
 app.use("/api/payment", paymentRoutes)
 app.use("/api/products", productRoutes)
+app.use("/api/admin", adminRoutes)
 
 const PORT = process.env.PORT || 3000;
 

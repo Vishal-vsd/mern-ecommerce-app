@@ -22,6 +22,13 @@ const AdminProducts = () => {
 
     const handleDelete = async(id:string)=> {
         try {
+            const comfirmDelete = window.confirm(
+                "Delete this Product?"
+            )
+            if(!comfirmDelete){
+                return;
+            }
+            
             const res = await fetch(`http://localhost:3000/api/products/delete/${id}`,
                 {
                     method: "DELETE",
@@ -198,7 +205,9 @@ rounded-xl"
 
 <h2 className="
 
-font-semibold">
+font-semibold
+
+">
 
 {
 
@@ -208,13 +217,122 @@ product.title
 
 </h2>
 
+
 <p className="
 
-text-gray-500">
+text-gray-500
+
+">
 
 ₹{
 
 product.price
+
+}
+
+</p>
+
+
+
+<p className="
+
+text-sm
+
+mt-1
+
+">
+
+Stock:
+
+<span className="
+
+font-medium
+
+ml-1
+
+">
+
+{
+
+product.stock
+
+}
+
+</span>
+
+</p>
+
+
+
+<p className="
+
+text-sm
+
+mt-1
+
+">
+
+{
+
+product.stock === 0
+
+?
+
+(
+
+<span className="
+
+text-red-500
+
+font-medium
+
+">
+
+Out of Stock
+
+</span>
+
+)
+
+:
+
+product.stock < 5
+
+?
+
+(
+
+<span className="
+
+text-orange-500
+
+font-medium
+
+">
+
+Low Stock
+
+</span>
+
+)
+
+:
+
+(
+
+<span className="
+
+text-green-600
+
+font-medium
+
+">
+
+In Stock
+
+</span>
+
+)
 
 }
 
@@ -240,7 +358,13 @@ py-2
 
 bg-gray-100
 
-rounded-lg">
+rounded-lg"
+
+onClick={()=> 
+    navigate(
+        `/admin/products/edit/${product._id}`
+    )
+}>
 
 Edit
 

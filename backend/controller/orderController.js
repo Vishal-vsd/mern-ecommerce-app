@@ -1,4 +1,5 @@
 const Order = require("../model/order");
+const Product = require("../model/product")
 
 const createOrder = async(req, res) => {
     try {
@@ -11,9 +12,20 @@ const createOrder = async(req, res) => {
             totalPrice
         })
 
+        for (const item of products) {
+            const product = await Product.findById(item.productId);
+
+            if(product) {
+                product.stock -= item.quantity;
+
+                await product.save();
+            }
+        }
+
         res.status(201).json({
             success: true,
-            message: "Order placed successfully!"
+            message: "Order placed successfully!",
+            order,
         })
 
     } catch (error) {
