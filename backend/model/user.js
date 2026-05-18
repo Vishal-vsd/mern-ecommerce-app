@@ -22,11 +22,22 @@ const userSchema = new mongoose.Schema({
     },
     cart: [
             {       
-                productId: Number,
+                productId: String,
                 title: String,
                 price: Number,
-                quantity: Number,
-                image: String
+                quantity: {
+                    type: Number,
+                    default: 1
+                },
+                image: String,
+                discount: {
+                    type: Number,
+                    default: 0
+                },
+                stock: {
+                    type: Number,
+                    default: 0
+                }
             }
     ]
 

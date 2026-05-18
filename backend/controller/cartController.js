@@ -1,4 +1,5 @@
 const User = require("../model/user")
+const Product = require("../model/product")
 
 const getCart = async(req, res) => {
     try {
@@ -30,7 +31,9 @@ const addToCart = async(req, res) => {
             productId,
             price,
             title,
-            image
+            image,
+            discount,
+            stock
         } = req.body;
 
         const user = await User.findById(req.user);
@@ -42,16 +45,34 @@ const addToCart = async(req, res) => {
             })
         }
 
+        const dbProduct = await Product.findById(productId);
+        
+        if(!dbProduct){
+            return res.status(404).json({
+                success: false,
+                message: "Product not found"
+            })
+        }
+
+        if(dbProduct.stock<=0){
+            return res.status(400).json({
+                success: false,
+                message: "Out of stock"
+            })
+        }
+
         const existingProduct = await user.cart.find((item) => item.productId === productId)
 
         if(existingProduct){
             existingProduct.quantity += 1 
         } else {
             user.cart.push({
-                productId,
-                title,
-                price,
-                image,
+                productId: dbProduct._id,
+                title: dbProduct.title,
+                price: dbProduct.price,
+                image: dbProduct.image,
+                discount: dbProduct.discount,
+                stock: dbProduct.stock,
                 quantity: 1
             })
         }
@@ -76,7 +97,7 @@ const removeFromCart = async (req, res) => {
 
         const user = await User.findById(req.user);
 
-        const productId = Number(req.params.productId);
+        const productId = req.params.productId;
 
         user.cart = user.cart.filter(
             (item) => item.productId !== productId
@@ -102,7 +123,7 @@ const updateCartQuantity = async (req, res) => {
     try {
         const user = await User.findById(req.user);
 
-        const productId = Number(req.params.productId);
+        const productId = req.params.productId;
 
         const { quantity } = req.body;
 

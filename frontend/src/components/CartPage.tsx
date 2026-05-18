@@ -53,9 +53,25 @@ const CartPage = () => {
                   {product.title}
                 </h3>
 
-                <p className="text-lg font-semibold mt-1 text-gray-900">
-                  ₹{product.price}
+                <div className="mt-1">
+                <p className="text-lg font-semibold text-gray-900">
+                  ₹{
+                  ( 
+                    product.discount > 0
+                    ? product.price - (product.price * product.discount)/100
+                    : product.price
+                  ).toFixed(0)
+                  }
                 </p>
+                {
+                  product.discount > 0 &&
+                  <p className="text-sm text-gray-400 line-through">
+                    ₹{
+                      product.price
+                    }
+                  </p>
+                }
+              </div>
 
                 <div className="flex items-center gap-3 mt-3">
                   <button

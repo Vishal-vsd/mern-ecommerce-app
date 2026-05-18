@@ -121,6 +121,10 @@ const PayementPage = () => {
                                         quantity: item.quantity,
                                         price: item.price,
                                         image: item.image,
+                                        discount: item.discount,
+                                        finalPrice: item.discount > 0 
+                                                    ? item.price - (item.price * item.discount)/100
+                                                    : item.price
                                     })
                                 ),
 
@@ -132,7 +136,7 @@ const PayementPage = () => {
                         }
                     );
 
-                    const orderData = await orderRes.json()
+                    const orderData = await orderRes.json();
 
                     if (orderData.success) {
                        
@@ -144,7 +148,13 @@ const PayementPage = () => {
                             }
                         );
                         clearCart()
-                        navigate("/success")
+                        navigate("/success", {
+                            replace: true,
+                            state: {
+                                paid: true
+                            }
+                        })
+                        
                     }
                 },
                 theme: {
@@ -226,10 +236,52 @@ const PayementPage = () => {
 
                                     </div>
 
+                                    <div className="text-right">
+
                                     <p className="font-semibold text-gray-900">
-                                        ₹
-                                        {(item.price * item.quantity).toFixed(2)}
+
+                                    ₹{
+                                    (
+                                    item.discount >0
+                                    ? item.price - ( item.price * item.discount)/100
+                                    : item.price
+                                )
+
+                                    *
+
+                                    item.quantity
+
+                                    }
+
                                     </p>
+
+                                    {
+
+                                    item.discount >0 && (
+
+                                    <p className="
+
+                                    text-xs
+
+                                    text-gray-400
+
+                                    line-through">
+
+                                    ₹{
+
+                                    item.price *
+
+                                    item.quantity
+
+                                    }
+
+                                    </p>
+
+                                    )
+
+                                    }
+
+                                    </div>
 
                                 </div>
 

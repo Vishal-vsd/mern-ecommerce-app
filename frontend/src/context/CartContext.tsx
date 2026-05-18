@@ -5,12 +5,22 @@ import toast from "react-hot-toast";
 export const CartContext = createContext<any>(null);
 
 type CartItem = {
-  productId: string;
-  title: string;
-  price: number;
-  image: string;
-  quantity: number;
-};
+
+productId:string;
+
+title:string;
+
+price:number;
+
+discount:number;
+
+stock:number;
+
+image:string;
+
+quantity:number;
+
+}
 
 const CartProvider = (({children} : any) => {
     const [cart, setCart] = useState<CartItem[]>([]);
@@ -77,17 +87,32 @@ const CartProvider = (({children} : any) => {
                         }, 
                         credentials: "include",
 
-                        body: JSON.stringify({
-                            productId: product._id,
-                            title: product.title,
-                            price: product.price,
-                            image: product.image
+                        body:
+                        JSON.stringify({
+
+                        productId:
+                        product._id,
+
+                        title:
+                        product.title,
+
+                        price:
+                        product.price,
+
+                        discount:
+                        product.discount,
+
+                        stock:
+                        product.stock,
+
+                        image:
+                        product.image
+
                         })
                     }
                 )
 
                 const data = await res.json()
-                console.log(data)
 
                 if(data.success){
                     setCart(data.cart || []);
@@ -109,11 +134,31 @@ const CartProvider = (({children} : any) => {
                 existingProduct.quantity += 1
             } else {
                     guestCart.push({
-                        productId: product._id,
-                        title: product.title,
-                        price: product.price,
-                        image: product.image,
-                        quantity:  1
+                    productId:
+
+                    product._id,
+
+                    title:
+
+                    product.title,
+
+                    price:
+
+                    product.price,
+
+                    discount:
+
+                    product.discount,
+
+                    stock:
+
+                    product.stock,
+
+                    image:
+
+                    product.image,
+
+                    quantity:1
                     })
                  }
 
@@ -168,7 +213,7 @@ const CartProvider = (({children} : any) => {
         setCart([])
     }
 
-    const updateQuantity = async (id: number, quantity: number) => {
+    const updateQuantity = async (id: string, quantity: number) => {
         if(user) {
             try {
 
@@ -220,21 +265,31 @@ const CartProvider = (({children} : any) => {
         }
     }
 
-    const increaseQuantity = (id: number, currentQuantity: number)=> {
+    const increaseQuantity = (id: string, currentQuantity: number)=> {
         updateQuantity(
             id,
             currentQuantity + 1
         )
     }
 
-        const decreaseQuantity = (id: number, currentQuantity: number)=> {
+        const decreaseQuantity = (id: string, currentQuantity: number)=> {
         updateQuantity(
             id,
             currentQuantity - 1
         )
     }
     const getTotalPrice = () => {
-        return cart.reduce((total: any, item: any) => total + item.price * item.quantity, 0)
+        return cart.reduce((total: any, item: any) => 
+        { 
+            const finalPrice = item.discount > 0
+            ? item.price - (item.price * item.discount)/100
+            : item.price;
+
+            return (
+                total + finalPrice * item.quantity
+            )
+         }, 0
+        )
     }
     return (
         <CartContext.Provider value= {

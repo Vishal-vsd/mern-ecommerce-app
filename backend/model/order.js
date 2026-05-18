@@ -11,11 +11,21 @@ const OrderSchema = new mongoose.Schema(
 
     products: [
       {
-        productId: Number,
+        productId: {
+          type: String,
+          required: true
+        },
 
         title: String,
 
         price: Number,
+
+        discount: {
+          type: Number,
+          default: 0
+        },
+
+        finalPrice: Number,
 
         quantity: Number,
 

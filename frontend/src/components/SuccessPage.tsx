@@ -1,6 +1,18 @@
 import { Link } from "react-router-dom";
+import { CartContext } from "../context/CartContext";
+import { useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 const OrderSuccessPage = () => {
+
+  const navigate = useNavigate();
+  const {cart} = useContext(CartContext);
+  
+  useEffect(()=> {
+    if(cart.length> 0) {
+      navigate("/")
+    }
+  })
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 px-4">
