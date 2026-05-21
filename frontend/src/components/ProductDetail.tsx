@@ -23,7 +23,7 @@ type Product = {
 }
 
 const ProductDetail = () => {
-  const { addToCart } = useContext(CartContext);
+  const { addToCart, addingToCart} = useContext(CartContext);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -159,8 +159,9 @@ const ProductDetail = () => {
             </p>
 
           <button
+          disabled={addingToCart || product.stock === 0}
             onClick={() => addToCart(product)}
-            className="mt-8 w-full bg-black text-white py-3 rounded-xl hover:bg-gray-900 transition duration-300 tracking-wide"
+            className="mt-8 w-full bg-black text-white py-3 rounded-xl hover:bg-gray-900 transition duration-300 tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Add to Cart
           </button>

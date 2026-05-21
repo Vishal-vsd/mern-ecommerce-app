@@ -25,6 +25,7 @@ quantity:number;
 const CartProvider = (({children} : any) => {
     const [cart, setCart] = useState<CartItem[]>([]);
     const { user } = useContext(AuthContext);
+    const [addingToCart, setAddingToCart] = useState(false)
        
     const fetchCart = async (currentUser = user) => {
 
@@ -75,9 +76,14 @@ const CartProvider = (({children} : any) => {
 
     const addToCart = async (product: any) => {
 
-        if(user) {        
+        if(user) { 
+            
+            if(addingToCart){
+                return;
+            }
             
                 try {
+                    setAddingToCart(true)
 
                 const res = await fetch("http://localhost:3000/api/cart/add",
                     {
@@ -121,6 +127,8 @@ const CartProvider = (({children} : any) => {
 
             } catch (error) {
                 console.log(error)
+            } finally{
+                setAddingToCart(false);
             }
         } else {
             const guestCart = JSON.parse(
@@ -302,7 +310,8 @@ const CartProvider = (({children} : any) => {
                 updateQuantity, 
                 getTotalPrice, 
                 clearCart, 
-                fetchCart
+                fetchCart,
+                addingToCart
             }
          }> 
         {children}

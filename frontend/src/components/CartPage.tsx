@@ -94,11 +94,13 @@ const CartPage = () => {
                   />
 
                   <button
+
+                  disabled={product.quantity >= product.stock}
                     onClick={() => increaseQuantity(
                       product.productId,
                       product.quantity
                     )}
-                    className="w-8 h-8 flex items-center justify-center border rounded-md hover:bg-gray-100"
+                    className="w-8 h-8 flex items-center justify-center border rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     +
                   </button>

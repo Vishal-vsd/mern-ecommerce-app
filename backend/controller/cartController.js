@@ -61,9 +61,15 @@ const addToCart = async(req, res) => {
             })
         }
 
-        const existingProduct = await user.cart.find((item) => item.productId === productId)
+        const existingProduct = user.cart.find((item) => item.productId.toString() === productId.toString())
 
         if(existingProduct){
+            if(existingProduct.quantity >=dbProduct.stock) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Maximum quantity reached"
+                })
+            }
             existingProduct.quantity += 1 
         } else {
             user.cart.push({
@@ -125,8 +131,16 @@ const updateCartQuantity = async (req, res) => {
 
         const productId = req.params.productId;
 
+        const product = await Product.findById(productId);
+
         const { quantity } = req.body;
 
+        if(quantity > product.stock) {
+            return res.status(400).json9({
+                success: false,
+                message: "Only " + product.stock + " available"
+            })
+        }
         const cartItem = user.cart.find(
             (item) => item.productId === productId
         )

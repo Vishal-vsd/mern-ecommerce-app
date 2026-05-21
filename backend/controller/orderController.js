@@ -54,4 +54,56 @@ const getMyOrders = async (req, res) => {
     }
 }
 
-module.exports = { createOrder, getMyOrders }
+const getOrders = async(req, res) => {
+    try {
+        const orders = await Order.find()
+        .populate(
+            "user",
+            "name email"
+        ).sort({
+            createdAt: -1
+        })
+
+        res.status(200).json({
+            success: true,
+            orders
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+const getOrder = async (req, res) => {
+    try {
+        const {id} = req.params;
+
+        const order = await Order.findById(id).populate(
+            "user",
+            "name email"
+        )
+
+        if(!order){
+            return res.status(404).json({
+                success: false,
+                message: "Order not found"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            order
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+module.exports = { createOrder, getMyOrders, getOrders, getOrder
+
+ }
