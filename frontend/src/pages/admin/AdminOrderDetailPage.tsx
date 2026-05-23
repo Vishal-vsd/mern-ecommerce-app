@@ -1,16 +1,51 @@
 import { useParams } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { OrderContext } from "../../context/OrderContext";
+import toast from "react-hot-toast";
 
 const AdminOrderDetailPage = () => {
     const {id} = useParams();
     const {order, loading, fetchOrder} = useContext(OrderContext)
+    const [status, setStatus] = useState("");
+
+    useEffect(()=> {
+        if(order){
+            setStatus(order.status);
+        }
+    },[order]);
 
     useEffect(()=> {
         if(id){
             fetchOrder(id)
         }
     }, [id])
+
+    const updateStatus = async() => {
+        try {
+            const res = await fetch(`http://localhost:3000/api/orders/status/${id}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "include",
+                    body: JSON.stringify({
+                        status
+                    })
+                }
+            )
+            const data = await res.json();
+
+            if(data.success){
+                toast.success(
+                    "Status udpated"
+                )
+                fetchOrder(id!)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     if(loading) {
         return (
@@ -436,6 +471,18 @@ const AdminOrderDetailPage = () => {
 
         <div className="
 
+        grid
+
+        md:grid-cols-3
+
+        gap-6
+
+        ">
+
+        {/* CREATED */}
+
+        <div className="
+
         bg-white
 
         border
@@ -444,23 +491,27 @@ const AdminOrderDetailPage = () => {
 
         p-6
 
-        flex
-
-        justify-between
-
-        items-center
-
         ">
 
-        <div>
+        <p className="
 
-        <p className="text-gray-500">
+        text-gray-500
+
+        mb-2
+
+        ">
 
         Created
 
         </p>
 
-        <p className="font-medium">
+        <h2 className="
+
+        font-semibold
+
+        text-lg
+
+        ">
 
         {
 
@@ -474,14 +525,33 @@ const AdminOrderDetailPage = () => {
 
         }
 
-        </p>
+        </h2>
 
         </div>
 
 
-        <div>
 
-        <p className="text-gray-500">
+        {/* TOTAL */}
+
+        <div className="
+
+        bg-black
+
+        text-white
+
+        rounded-3xl
+
+        p-6
+
+        ">
+
+        <p className="
+
+        text-gray-300
+
+        mb-2
+
+        ">
 
         Total Amount
 
@@ -489,7 +559,7 @@ const AdminOrderDetailPage = () => {
 
         <h2 className="
 
-        text-3xl
+        text-4xl
 
         font-bold
 
@@ -502,6 +572,127 @@ const AdminOrderDetailPage = () => {
         }
 
         </h2>
+
+        </div>
+
+
+
+        {/* STATUS */}
+
+        <div className="
+
+        bg-white
+
+        border
+
+        rounded-3xl
+
+        p-6
+
+        ">
+
+        <h2 className="
+
+        font-semibold
+
+        mb-4
+
+        ">
+
+        Update Status
+
+        </h2>
+
+
+        <div className="
+
+        flex
+
+        flex-col
+
+        gap-3
+
+        ">
+
+        <select
+
+        value={
+        status
+        }
+
+        onChange={(e)=>
+
+        setStatus(
+
+        e.target.value
+
+        )
+
+        }
+
+        className="
+
+        border
+
+        p-3
+
+        rounded-xl
+
+        "
+
+        >
+
+        <option value="Processing">
+
+        Processing
+
+        </option>
+
+
+        <option value="Shipped">
+
+        Shipped
+
+        </option>
+
+
+        <option value="Delivered">
+
+        Delivered
+
+        </option>
+
+        </select>
+
+
+
+        <button
+
+        onClick={
+        updateStatus
+        }
+
+        className="
+
+        bg-black
+
+        text-white
+
+        p-3
+
+        rounded-xl
+
+        hover:bg-gray-800
+
+        "
+
+        >
+
+        Update Status
+
+        </button>
+
+        </div>
 
         </div>
 
