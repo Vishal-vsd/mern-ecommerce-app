@@ -55,6 +55,7 @@ import AdminRoutes from "./routes/AdminRoutes";
 import EditProductPage from "./pages/admin/EditProductPage";
 import AdminOrdersPage from "./pages/AdminOrdersPage";
 import AdminOrderDetailPage from "./pages/admin/AdminOrderDetailPage";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
 
 
 
@@ -269,6 +270,10 @@ element={<AdminOrdersPage/>}
 
 <Route path="orders/:id" 
 element= {<AdminOrderDetailPage />}
+/>
+
+<Route path="users" 
+element= {<AdminUsersPage />}
 />
 
 </Route>

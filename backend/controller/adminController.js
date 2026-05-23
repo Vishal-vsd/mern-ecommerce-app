@@ -24,5 +24,27 @@ const getStats = async (req, res) => {
     }
 }
 
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find().select("-password");
 
-module.exports = { getStats } 
+        if(users.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "No users found"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            users
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+module.exports = { getStats, getAllUsers} 
