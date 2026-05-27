@@ -1,332 +1,517 @@
-
-import {
-    Package,
-    ShoppingBag,
-    Users
-}
-from "lucide-react";
+import { Package, ShoppingBag, Users, DollarSign } from "lucide-react";
 
 import { useState, useEffect } from "react";
 
 const AdminDashboard = () => {
+  const [stats, setStats] = useState({
+    products: 0,
+    users: 0,
+    orders: 0,
+    revenue: 0,
+  });
 
-    const [stats, setStats] = useState({
-        products: 0,
-        users: 0,
-        orders: 0
-    })
+  const [recentOrders, setRecentOrders] = useState<any[]>([]);
 
-    const fetchStats = async() => {
-        try {
-            const res = await fetch("http://localhost:3000/api/admin/stats",
-                {
-                    credentials: "include"
-                }
-            )
+  const fetchRecentOrders = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/admin/recent-orders", {
+        credentials: "include",
+      });
 
-            const data = await res.json();
-
-            if(data.success){
-                setStats(data)
-            }
-        } catch (error) {
-            console.log(error)
-        }
+      const data = await res.json();
+      if (data.success) {
+        setRecentOrders(data.recentOrders);
+      }
+    } catch (error) {
+      console.log(error);
     }
+  };
 
-    useEffect(()=> {
-        fetchStats()
-    },[])
+  const fetchStats = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/admin/stats", {
+        credentials: "include",
+      });
 
-return (
+      const data = await res.json();
 
-<div className="
+      if (data.success) {
+        setStats({
+          products: data.products,
 
-min-h-screen
+          users: data.users,
 
-bg-[#f8fafc]
+          orders: data.orders,
 
-px-12
+          revenue: data.revenue,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-py-10
+  useEffect(() => {
+    fetchStats();
+    fetchRecentOrders();
+  }, []);
 
-">
+  return (
+    <div
+      className="
 
-{/* HEADER */}
+                    min-h-screen
 
-<div>
+                    bg-[#f8fafc]
 
-<h1 className="
-text-5xl
-font-bold
-tracking-tight
-">
+                    px-12
 
-Welcome Admin 👋
+                    py-10
 
-</h1>
+                    "
+    >
+      {/* HEADER */}
 
-<p className="
-text-gray-500
+      <div>
+        <h1
+          className="
+                    text-5xl
+                    font-bold
+                    tracking-tight
+                    "
+        >
+          Welcome Admin 👋
+        </h1>
 
-mt-3
+        <p
+          className="
+                    text-gray-500
 
-text-lg
-">
+                    mt-3
 
-Manage products,
-orders and users
+                    text-lg
+                    "
+        >
+          Manage products, orders and users
+        </p>
+      </div>
 
-</p>
+      {/* STATS */}
 
-</div>
+      <div
+        className="
 
+                    grid
 
+                    sm:grid-cols-2
 
-{/* STATS */}
+                    xl:grid-cols-4
 
-<div className="
+                    gap-7
 
-grid
+                    mt-12
 
-md:grid-cols-3
+                    "
+      >
+        <div
+          className="
 
-gap-7
+                    bg-white
 
-mt-12
+                    rounded-3xl
 
-">
+                    border
 
-{/* PRODUCTS */}
+                    border-gray-100
 
-<div className="
+                    p-8
 
-bg-white
+                    shadow-sm
 
-rounded-3xl
+                    hover:shadow-md
 
-border
+                    transition
 
-border-gray-100
+                    min-w-0
 
-p-8
+                    "
+        >
+          <div
+            className="
 
-shadow-sm
+                    flex
 
-hover:shadow-md
+                    justify-between
 
-transition
+                    items-center
 
-">
+                    "
+          >
+            <h3 className="text-gray-500">Revenue</h3>
 
-<div className="
+            <DollarSign size={22} className="text-gray-400" />
+          </div>
+
+          <p
+            className="
+
+                    text-3xl
+
+                    lg:text-4xl
+
+                    font-bold
+
+                    mt-6
+
+                    leading-tight
+
+                    break-all
+
+                    "
+          >
+            ₹
+            {stats.revenue.toLocaleString(
+              "en-IN",
+
+              {
+                minimumFractionDigits: 0,
+
+                maximumFractionDigits: 2,
+              },
+            )}
+          </p>
+
+          <p
+            className="
+
+                    text-sm
+
+                    text-green-600
+
+                    mt-2
+
+                    "
+          >
+            Total store earnings
+          </p>
+        </div>
+        {/* PRODUCTS */}
+
+        <div
+          className="
+
+                    bg-white
+
+                    rounded-3xl
+
+                    border
+
+                    border-gray-100
+
+                    p-8
+
+                    shadow-sm
+
+                    hover:shadow-md
+
+                    transition
+
+                    "
+        >
+          <div
+            className="
+                    flex
+                    justify-between
+                    items-center"
+          >
+            <h3
+              className="
+                    text-gray-500"
+            >
+              Total Products
+            </h3>
+
+            <Package
+              size={22}
+              className="
+                    text-gray-400"
+            />
+          </div>
+
+          <p
+            className="
+                    text-5xl
+
+                    font-bold
+
+                    mt-6
+                    "
+          >
+            {stats.products}
+          </p>
+        </div>
+
+        {/* ORDERS */}
+
+        <div
+          className="
+
+                    bg-white
+
+                    rounded-3xl
+
+                    border
+
+                    border-gray-100
+
+                    p-8
+
+                    shadow-sm
+
+                    hover:shadow-md
+
+                    transition
+
+                    "
+        >
+          <div
+            className="
+                    flex
+                    justify-between
+                    items-center"
+          >
+            <h3
+              className="
+                    text-gray-500"
+            >
+              Orders
+            </h3>
+
+            <ShoppingBag
+              size={22}
+              className="
+                    text-gray-400"
+            />
+          </div>
+
+          <p
+            className="
+                    text-5xl
+
+                    font-bold
+
+                    mt-6
+                    "
+          >
+            {stats.orders}
+          </p>
+        </div>
+
+        {/* USERS */}
+
+        <div
+          className="
+
+                    bg-white
+
+                    rounded-3xl
+
+                    border
+
+                    border-gray-100
+
+                    p-8
+
+                    shadow-sm
+
+                    hover:shadow-md
+
+                    transition
+
+                    "
+        >
+          <div
+            className="
+                    flex
+                    justify-between
+                    items-center"
+          >
+            <h3
+              className="
+                    text-gray-500"
+            >
+              Users
+            </h3>
+
+            <Users
+              size={22}
+              className="
+                    text-gray-400"
+            />
+          </div>
+
+          <p
+            className="
+                    text-5xl
+
+                    font-bold
+
+                    mt-6
+                    "
+          >
+            {stats.users}
+          </p>
+        </div>
+      </div>
+
+      {/* RECENT ACTIVITY */}
+
+      <div
+        className="
+
+                    bg-white
+
+                    rounded-3xl
+
+                    border
+
+                    p-8
+
+                    mt-10
+
+                    "
+      >
+        <h2
+          className="
+
+                    text-2xl
+
+                    font-semibold
+
+                    mb-6
+
+                    "
+        >
+          Recent Activity
+        </h2>
+
+        <div
+          className="
+
+space-y-5
+
+"
+        >
+          {recentOrders.length === 0 ? (
+            <p
+              className="
+
+text-gray-400
+
+text-sm
+
+"
+            >
+              No recent activity
+            </p>
+          ) : (
+            recentOrders.map((order: any) => (
+              <div
+                key={order._id}
+                className="
+
 flex
+
 justify-between
-items-center">
 
-<h3 className="
-text-gray-500">
+items-center
 
-Total Products
+pb-5
 
-</h3>
-
-<Package
-size={22}
-className="
-text-gray-400"
-/>
-
-</div>
-
-
-<p className="
-text-5xl
-
-font-bold
-
-mt-6
-">
-
-{
-    stats.products
-}
-
-</p>
-
-</div>
-
-
-
-{/* ORDERS */}
-
-<div className="
-
-bg-white
-
-rounded-3xl
-
-border
+border-b
 
 border-gray-100
 
-p-8
+last:border-none
 
-shadow-sm
+"
+              >
+                <div>
+                  <p
+                    className="
 
-hover:shadow-md
-
-transition
-
-">
-
-<div className="
-flex
-justify-between
-items-center">
-
-<h3 className="
-text-gray-500">
-
-Orders
-
-</h3>
-
-<ShoppingBag
-size={22}
-className="
-text-gray-400"
-/>
-
-</div>
-
-
-<p className="
-text-5xl
-
-font-bold
-
-mt-6
-">
-
-{
-    stats.orders
-}
-
-</p>
-
-</div>
-
-
-
-{/* USERS */}
-
-<div className="
-
-bg-white
-
-rounded-3xl
-
-border
-
-border-gray-100
-
-p-8
-
-shadow-sm
-
-hover:shadow-md
-
-transition
-
-">
-
-<div className="
-flex
-justify-between
-items-center">
-
-<h3 className="
-text-gray-500">
-
-Users
-
-</h3>
-
-<Users
-size={22}
-className="
-text-gray-400"
-/>
-
-</div>
-
-
-<p className="
-text-5xl
-
-font-bold
-
-mt-6
-">
-
-{
-    stats.users
-}
-
-</p>
-
-</div>
-
-</div>
-
-
-
-{/* RECENT ACTIVITY */}
-
-<div className="
-
-bg-white
-
-rounded-3xl
-
-border
-
-border-gray-100
-
-p-8
-
-shadow-sm
-
-mt-10
-
-">
-
-<h2 className="
-text-2xl
 font-semibold
-mb-6">
 
-Recent Activity
+text-[16px]
 
-</h2>
+"
+                  >
+                    {order.user?.name || "Unknown User"}
+                  </p>
 
+                  <p
+                    className="
 
-<p className="
-text-gray-500">
+text-sm
 
-No recent activity yet.
+text-gray-400
 
-</p>
+mt-1
 
-</div>
+"
+                  >
+                    {new Date(order.createdAt).toLocaleDateString(
+                      "en-IN",
 
+                      {
+                        day: "numeric",
 
-</div>
+                        month: "short",
 
-)
+                        year: "numeric",
+                      },
+                    )}
+                  </p>
+                </div>
 
-}
+                <div
+                  className="
 
-export default
-AdminDashboard;
+text-right
+
+"
+                >
+                  <p
+                    className="
+
+font-bold
+
+"
+                  >
+                    ₹{order.totalPrice.toLocaleString("en-IN")}
+                  </p>
+
+                  <p
+                    className="
+
+text-xs
+
+text-green-600
+
+mt-1
+
+"
+                  >
+                    {order.status || "Placed"}
+                  </p>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboard;

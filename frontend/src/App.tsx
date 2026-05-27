@@ -145,7 +145,7 @@ function App() {
             }
           />
 
-          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/product/:id" element={<UserRoutes><ProductDetail /></UserRoutes>} />
         </Route>
 
         {/* ---------- ADMIN ---------- */}
@@ -170,7 +170,7 @@ function App() {
           <Route path="orders/:id" element={<AdminOrderDetailPage />} />
 
           <Route path="users" element={<AdminUsersPage />} />
-          <Route path="users/:id" element={<AdminUserDetailPage/>} />
+          <Route path="users/:id" element={<AdminUserDetailPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

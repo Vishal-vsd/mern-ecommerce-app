@@ -1,5 +1,5 @@
 const express = require("express");
-const { getStats, getAllUsers, deleteUser, getUser } = require("../controller/adminController");
+const { getStats, getAllUsers, deleteUser, getUser, changeRole, getRecentOrders } = require("../controller/adminController");
 const protect = require("../middleware/protect");
 const {isAdmin} = require("../middleware/adminMiddleware");
 
@@ -10,4 +10,6 @@ router.get("/stats", protect, isAdmin, getStats)
 router.get("/users", protect, isAdmin, getAllUsers)
 router.delete("/delete/:id", protect, isAdmin, deleteUser)
 router.get("/users/:id", protect, isAdmin, getUser)
+router.put("/users/:id/role", protect, isAdmin, changeRole)
+router.get("/recent-orders", protect, isAdmin, getRecentOrders)
 module.exports = router

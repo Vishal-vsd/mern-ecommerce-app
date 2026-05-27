@@ -457,27 +457,6 @@ const AdminUsersPage = () => {
                 View
               </button>
 
-              <button
-                className="
-
-              px-4
-
-              py-2
-
-              bg-blue-50
-
-              text-blue-600
-
-              rounded-xl
-
-              hover:bg-blue-100
-
-              text-sm
-
-              "
-              >
-                Change Role
-              </button>
 
               <button
                 disabled={deleteLoading}
