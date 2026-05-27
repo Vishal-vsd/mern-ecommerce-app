@@ -3,71 +3,41 @@ import { Outlet } from "react-router-dom";
 import NavBar from "../components/NavBar";
 
 type Props = {
+  searchTerm: string;
 
-searchTerm:string;
+  setSearchTerm: any;
 
-setSearchTerm:any;
+  category: string;
 
-category:string;
+  setCategory: any;
 
-setCategory:any;
+  sortOption: string;
 
-sortOption:string;
+  setSortOption: any;
+};
 
-setSortOption:any;
+const PublicLayout = ({
+  searchTerm,
+  setSearchTerm,
+  category,
+  setCategory,
+  sortOption,
+  setSortOption,
+}: Props) => {
+  return (
+    <>
+      <NavBar
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        category={category}
+        setCategory={setCategory}
+        sortOption={sortOption}
+        setSortOption={setSortOption}
+      />
 
-}
+      <Outlet />
+    </>
+  );
+};
 
-const PublicLayout =
-({
-
-searchTerm,
-
-setSearchTerm,
-
-category,
-
-setCategory,
-
-sortOption,
-
-setSortOption
-
-}:Props)=>{
-
-return(
-
-<>
-
-<NavBar
-
-searchTerm={searchTerm}
-
-setSearchTerm={
-setSearchTerm
-}
-
-category={category}
-
-setCategory={
-setCategory
-}
-
-sortOption={sortOption}
-
-setSortOption={
-setSortOption
-}
-
-/>
-
-<Outlet/>
-
-</>
-
-)
-
-}
-
-export default
-PublicLayout;
+export default PublicLayout;

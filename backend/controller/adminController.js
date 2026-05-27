@@ -47,4 +47,68 @@ const getAllUsers = async (req, res) => {
     }
 }
 
-module.exports = { getStats, getAllUsers} 
+const getUser = async(req, res) => {
+    try {
+        const {id} = req.params;
+        const user = await User.findById(id).select("-password");
+        if(!user){
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            user
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+const deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const user = await User.findById(id);
+        if(!user){
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+
+        if(req.user.toString() === id){
+            return res.status(400).json({
+                success: false,
+                message: "You can't delete yourself"
+            })
+        }
+
+        if(user.role === "admin"){
+            return res.status(400).json({
+                success: false,
+                message: "Admin account cannot be deleted"
+            })
+        }
+
+        await User.findByIdAndDelete(id);
+
+        res.status(200).json({
+            success: true,
+            message: "User deleted successfully"
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        })
+    }
+}
+
+module.exports = { getStats, getUser, getAllUsers, deleteUser} 

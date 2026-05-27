@@ -21,6 +21,7 @@ updatedAt:string;
 const UserProvider = ({children}: any) => {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(false);
+    const [ deleteLoading, setDeleteLoading ] = useState(false);
 
     const fetchUsers = async ()=> {
         try {
@@ -49,7 +50,8 @@ const UserProvider = ({children}: any) => {
             users,
             loading,
             fetchUsers,
-            setUsers
+            deleteLoading,
+            setDeleteLoading
         }}>
             {children}
         </UserContext.Provider>

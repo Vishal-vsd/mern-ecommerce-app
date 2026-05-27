@@ -1,10 +1,12 @@
+import { Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
 
 const AdminRoutes = ({children}: any)=> {
     const {user, loading} = useContext(AuthContext)
-    const navigate = useNavigate()
+    // const pathname = useLocation()
+
+    // const isUserLoggedIn = user
 
     if(loading){
         return (<div>
@@ -12,16 +14,14 @@ const AdminRoutes = ({children}: any)=> {
         </div>)
     }
 
-    if(!user) {
+    else if(!user) {
         return (
-            navigate("/login")
+            <Navigate to="/login" replace/>
         )
     }
-    if(user.role !== "admin") {
+    else if (user.role !== "admin") {
         return (
-            navigate(
-                "/"
-            )
+            <Navigate to="/login" replace/>
         )
     }
 

@@ -8,6 +8,7 @@ const LoginPage = () => {
     const {setUser} = useContext(AuthContext);
     const {fetchCart} = useContext(CartContext);
 
+
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
@@ -30,10 +31,10 @@ const LoginPage = () => {
                 }
             )
             const data = await res.json();
-            console.log(data.user)
 
             if(data.success){
-                setUser(data.user)
+   localStorage.setItem("user",JSON.stringify(data.user))
+                setUser(data.user);
                 
                 const guestCart = JSON.parse(
                     localStorage.getItem("guestCart") || "[]"
