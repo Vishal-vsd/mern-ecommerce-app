@@ -120,7 +120,14 @@ const PayementPage = () => {
                                         title: item.title,
                                         quantity: item.quantity,
                                         price: item.price,
-                                        image: item.image,
+                                        image: {
+                                            url: typeof item.image==="string"
+                                            ? item.image
+                                            : item.image?.url,
+                                            public_id: typeof item.image==="string"
+                                            ? ""
+                                            : item.image?.public_id || ""
+                                        },
                                         discount: item.discount,
                                         finalPrice: item.discount > 0 
                                                     ? item.price - (item.price * item.discount)/100
@@ -217,7 +224,10 @@ const PayementPage = () => {
                                     <div className="flex items-center gap-3">
 
                                         <img
-                                            src={item.image}
+                                            src={typeof item.image==="string"
+                                                ? item.image
+                                                : item.image?.url
+                                            }
                                             alt={item.title}
                                             className="w-14 h-14 object-contain bg-gray-50 rounded-xl p-2"
                                         />

@@ -145,7 +145,14 @@ function App() {
             }
           />
 
-          <Route path="/product/:id" element={<UserRoutes><ProductDetail /></UserRoutes>} />
+          <Route
+            path="/product/:id"
+            element={
+              <NonAdminRoutes>
+                <ProductDetail />
+              </NonAdminRoutes>
+            }
+          />
         </Route>
 
         {/* ---------- ADMIN ---------- */}

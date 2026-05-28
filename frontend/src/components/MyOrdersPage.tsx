@@ -6,7 +6,10 @@ type Order = {
     products: {
         title: string,
         quantity: number,
-        image: string
+        image: {
+          url: string,
+          public_id: string,
+        }
     }[],
 
     totalPrice: number,
@@ -111,7 +114,10 @@ const MyOrdersPage = () => {
               >
 
                 <img
-                  src={product.image}
+                  src={typeof product.image==="string"
+                    ? product.image
+                    : product.image?.url
+                  }
                   className="w-16 h-16 object-contain bg-gray-50 rounded-xl p-2"
                 />
 

@@ -3,27 +3,25 @@ import { useEffect, useState, useContext } from "react";
 import { CartContext } from "../context/CartContext";
 
 type Product = {
+  _id: string;
 
- _id:string,
+  title: string;
 
- title:string,
+  price: number;
 
- price:number,
+  description: string;
 
- description:string,
+  image: string | { url: string; public_id: string };
 
- image:string | { url: string; public_id: string },
+  category: string;
 
- category:string,
+  discount: number;
 
- discount:number,
-
- stock:number
-
-}
+  stock: number;
+};
 
 const ProductDetail = () => {
-  const { addToCart, addingToCart} = useContext(CartContext);
+  const { addToCart, addingToCart } = useContext(CartContext);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -42,7 +40,6 @@ const ProductDetail = () => {
         const data = await res.json();
 
         setProduct(data.product);
-
       } catch (error) {
         console.error("Error fetching product", error);
       } finally {
@@ -63,21 +60,17 @@ const ProductDetail = () => {
 
   if (!product) {
     return (
-      <div className="text-center mt-20 text-gray-500">
-        Product not found
-      </div>
+      <div className="text-center mt-20 text-gray-500">Product not found</div>
     );
   }
 
   const discountedPrice =
     product.discount > 0
-      ? product.price -
-        (product.price * product.discount) / 100
+      ? product.price - (product.price * product.discount) / 100
       : product.price;
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
-
       <button
         onClick={() => navigate(-1)}
         className="mb-6 text-sm text-gray-500 hover:text-black transition"
@@ -86,25 +79,17 @@ const ProductDetail = () => {
       </button>
 
       <div className="grid md:grid-cols-2 gap-12 items-center">
-
         <div className="relative flex justify-center bg-gray-50 p-8 rounded-2xl">
-          {
-
-            product.discount >0 && (
-
+          {product.discount > 0 && (
             <span className=" absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm z-50">
-
-            {product.discount}% OFF
-
+              {product.discount}% OFF
             </span>
-
-            )
-
-            }
+          )}
           <img
-            src={typeof product.image==="string"
-              ? product.image
-              : product.image?.url
+            src={
+              typeof product.image === "string"
+                ? product.image
+                : product.image?.url
             }
             alt={product.title}
             className="h-80 object-contain hover:scale-105 transition duration-300"
@@ -112,7 +97,6 @@ const ProductDetail = () => {
         </div>
 
         <div>
-
           <p className="text-sm text-gray-400 uppercase tracking-wide">
             {product.category}
           </p>
@@ -128,49 +112,40 @@ const ProductDetail = () => {
           <p className="text-3xl font-bold text-gray-900 mt-6">
             ₹{discountedPrice.toFixed(0)}
           </p>
-          {
-            product.discount >0 &&(
-
-            <p className="
-            line-through
-            text-gray-400">
-
-            ₹{product.price}
-
-            </p>
-
-            )
-
-            }
+          {product.discount > 0 && (
             <p
-              className={`mt-3 text-sm font-medium
+              className="
+            line-through
+            text-gray-400"
+            >
+              ₹{product.price}
+            </p>
+          )}
+          <p
+            className={`mt-3 text-sm font-medium
               ${
                 product.stock === 0
                   ? "text-red-500"
                   : product.stock < 5
-                  ? "text-orange-500"
-                  : "text-green-600"
+                    ? "text-orange-500"
+                    : "text-green-600"
               }`}
-            >
-              {
-                product.stock === 0
-                  ? "Out of stock"
-                  : product.stock < 5
-                  ? `Only ${product.stock} left`
-                  : "In stock"
-              }
-            </p>
+          >
+            {product.stock === 0
+              ? "Out of stock"
+              : product.stock < 5
+                ? `Only ${product.stock} left`
+                : "In stock"}
+          </p>
 
           <button
-          disabled={addingToCart || product.stock === 0}
+            disabled={addingToCart || product.stock === 0}
             onClick={() => addToCart(product)}
             className="mt-8 w-full bg-black text-white py-3 rounded-xl hover:bg-gray-900 transition duration-300 tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Add to Cart
           </button>
-
         </div>
-
       </div>
     </div>
   );

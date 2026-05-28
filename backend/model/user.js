@@ -29,7 +29,10 @@ const userSchema = new mongoose.Schema({
                     type: Number,
                     default: 1
                 },
-                image: String,
+                image: {
+                    url: {type:String, required:true},
+                    public_id: {type:String, default: ""}
+                },
                 discount: {
                     type: Number,
                     default: 0

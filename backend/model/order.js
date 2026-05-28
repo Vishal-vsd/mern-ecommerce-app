@@ -29,7 +29,10 @@ const OrderSchema = new mongoose.Schema(
 
         quantity: Number,
 
-        image: String,
+        image: {
+          url: {type:String, required:true},
+          public_id:{type:String, default:""}
+        },
       },
     ],
 

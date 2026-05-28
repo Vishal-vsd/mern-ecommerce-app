@@ -10,10 +10,49 @@ const AdminDashboard = () => {
     revenue: 0,
   });
 
+  const [loading, setLoading] = useState(false);
+
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
 
+  const [analytics, setAnalytics] = useState<any[]>([]);
+
+  const fetchAnalytics = async() => {
+    try {
+
+      const res = await fetch("http://localhost:3000/api/admin/analytics",
+        {
+          credentials:"include"
+        }
+      )
+
+      const data = await res.json();
+
+      if(data.success){
+        const formatted = data.sales.map((item: any)=> (
+          {
+            month: new Date(
+              0, 
+              item._id.month -1
+            ).toLocaleString(
+              "default",
+              {
+                month: "short"
+              }
+            ),
+            revenue: item.revenue,
+            orders: item.orders
+          }
+        ))
+
+        setAnalytics(formatted);
+      }
+    } catch (error) {
+      console.log(error)
+    } 
+  }
   const fetchRecentOrders = async () => {
     try {
+  
       const res = await fetch("http://localhost:3000/api/admin/recent-orders", {
         credentials: "include",
       });
@@ -29,6 +68,7 @@ const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
+    
       const res = await fetch("http://localhost:3000/api/admin/stats", {
         credentials: "include",
       });
@@ -48,13 +88,35 @@ const AdminDashboard = () => {
       }
     } catch (error) {
       console.log(error);
-    }
+    } 
   };
 
   useEffect(() => {
-    fetchStats();
-    fetchRecentOrders();
+    const loadData = async() => {
+      try {
+        setLoading(true);
+        await Promise.all([
+          fetchStats(),
+          fetchRecentOrders(),
+          fetchAnalytics(),
+        ])
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadData()
   }, []);
+
+  if(loading) {
+    return(
+      <div>
+        Loading... 
+      </div>
+    )
+  }
 
   return (
     <div

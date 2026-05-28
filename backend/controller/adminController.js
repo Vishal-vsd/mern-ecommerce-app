@@ -36,6 +36,44 @@ const getStats = async (req, res) => {
   }
 };
 
+const getSalesAnalytics = async (req, res) => {
+  try {
+    const sales = await Order.aggregate([
+      {
+        $group: {
+          _id: {
+            month: {
+              $month: "$createdAt"
+            }
+          },
+          revenue: {
+            $sum: "$totalPrice"
+          },
+          orders: {
+            $sum: 1
+          }
+        }
+      },
+      {
+        $sort: {
+          "_id.month": 1
+        }
+      }
+    ]);
+
+    res.status(200).json({
+      success:true,
+      sales
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    })
+  }
+}
+
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select("-password");
@@ -203,4 +241,4 @@ const getRecentOrders = async (req, res) => {
     });
   }
 };
-module.exports = { getStats, getUser, getAllUsers, deleteUser, changeRole, getRecentOrders };
+module.exports = { getStats, getUser, getAllUsers, deleteUser, changeRole, getRecentOrders, getSalesAnalytics};

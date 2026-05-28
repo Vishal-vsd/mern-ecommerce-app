@@ -9,7 +9,7 @@ const CartPage = () => {
     increaseQuantity,
     decreaseQuantity,
     getTotalPrice,
-    updateQuantity
+    updateQuantity,
   } = useContext(CartContext);
 
   if (cart.length === 0) {
@@ -18,32 +18,31 @@ const CartPage = () => {
         <h2 className="text-2xl font-semibold text-gray-800">
           Your cart is empty 🛒
         </h2>
-        <p className="text-gray-500 mt-2">
-          Start adding some products!
-        </p>
+        <p className="text-gray-500 mt-2">Start adding some products!</p>
       </div>
     );
   }
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
-
       <h2 className="text-2xl font-semibold text-gray-900 mb-8">
         Shopping Cart
       </h2>
 
       <div className="grid md:grid-cols-3 gap-8">
-
         <div className="md:col-span-2 space-y-4">
           {cart.map((product: any) => (
             <div
               key={product.productId}
               className="flex items-center gap-5 border border-gray-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition"
             >
-
               <div className="bg-gray-50 p-3 rounded-xl">
                 <img
-                  src={product.image}
+                  src={
+                    typeof product.image === "string"
+                      ? product.image
+                      : product.image?.url
+                  }
                   className="h-16 w-16 object-contain"
                 />
               </div>
@@ -54,52 +53,44 @@ const CartPage = () => {
                 </h3>
 
                 <div className="mt-1">
-                <p className="text-lg font-semibold text-gray-900">
-                  ₹{
-                  ( 
-                    product.discount > 0
-                    ? product.price - (product.price * product.discount)/100
-                    : product.price
-                  ).toFixed(0)
-                  }
-                </p>
-                {
-                  product.discount > 0 &&
-                  <p className="text-sm text-gray-400 line-through">
-                    ₹{
-                      product.price
-                    }
+                  <p className="text-lg font-semibold text-gray-900">
+                    ₹
+                    {(product.discount > 0
+                      ? product.price - (product.price * product.discount) / 100
+                      : product.price
+                    ).toFixed(0)}
                   </p>
-                }
-              </div>
+                  {product.discount > 0 && (
+                    <p className="text-sm text-gray-400 line-through">
+                      ₹{product.price}
+                    </p>
+                  )}
+                </div>
 
                 <div className="flex items-center gap-3 mt-3">
                   <button
-                    onClick={() => decreaseQuantity(
-                      product.productId,
-                      product.quantity
-                      )
+                    onClick={() =>
+                      decreaseQuantity(product.productId, product.quantity)
                     }
                     className="w-8 h-8 flex items-center justify-center border rounded-md hover:bg-gray-100"
                   >
                     −
                   </button>
 
-                  <input type="number" 
-                         value={product.quantity}
-                         onChange={(e)=> updateQuantity(
-                          product.productId,
-                          Number(e.target.value))}
-                         className="w-12 text-center border rounded"
+                  <input
+                    type="number"
+                    value={product.quantity}
+                    onChange={(e) =>
+                      updateQuantity(product.productId, Number(e.target.value))
+                    }
+                    className="w-12 text-center border rounded"
                   />
 
                   <button
-
-                  disabled={product.quantity >= product.stock}
-                    onClick={() => increaseQuantity(
-                      product.productId,
-                      product.quantity
-                    )}
+                    disabled={product.quantity >= product.stock}
+                    onClick={() =>
+                      increaseQuantity(product.productId, product.quantity)
+                    }
                     className="w-8 h-8 flex items-center justify-center border rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     +
@@ -118,14 +109,18 @@ const CartPage = () => {
         </div>
 
         <div className="border border-gray-200 rounded-2xl p-6 h-fit shadow-sm">
-
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Order Summary
           </h3>
 
           <div className="flex justify-between text-gray-600 mb-2">
             <span>Items</span>
-            <span>{cart.reduce((total:number, item: any) => total + item.quantity, 0)}</span>
+            <span>
+              {cart.reduce(
+                (total: number, item: any) => total + item.quantity,
+                0,
+              )}
+            </span>
           </div>
 
           <div className="flex justify-between text-gray-600 mb-4">
@@ -138,9 +133,7 @@ const CartPage = () => {
               Proceed to Checkout
             </button>
           </Link>
-
         </div>
-
       </div>
     </div>
   );
