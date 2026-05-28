@@ -12,7 +12,7 @@ type Product = {
 
  description:string,
 
- image:string,
+ image:string | { url: string; public_id: string },
 
  category:string,
 
@@ -102,7 +102,10 @@ const ProductDetail = () => {
 
             }
           <img
-            src={product.image}
+            src={typeof product.image==="string"
+              ? product.image
+              : product.image?.url
+            }
             alt={product.title}
             className="h-80 object-contain hover:scale-105 transition duration-300"
           />

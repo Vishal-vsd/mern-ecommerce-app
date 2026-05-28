@@ -183,9 +183,10 @@ gap-5">
 
 <img
 
-src={
+src={ typeof product.image === "string"
 
-product.image
+? product.image
+: product.image?.url
 
 }
 

@@ -11,6 +11,10 @@ const ProductCard = ({ product }: any) => {
         (product.price * product.discount) / 100
       : product.price;
 
+      const imageUrl = typeof product.image ==="string"
+      ? product.image
+      : product.image?.url
+
   return (
     <div className="
     bg-white
@@ -63,7 +67,9 @@ const ProductCard = ({ product }: any) => {
           )}
 
           <img
-            src={product.image}
+            src={
+              imageUrl
+            }
             alt={product.title}
             className="
             h-40

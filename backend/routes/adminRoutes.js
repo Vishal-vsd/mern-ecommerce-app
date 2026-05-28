@@ -12,4 +12,5 @@ router.delete("/delete/:id", protect, isAdmin, deleteUser)
 router.get("/users/:id", protect, isAdmin, getUser)
 router.put("/users/:id/role", protect, isAdmin, changeRole)
 router.get("/recent-orders", protect, isAdmin, getRecentOrders)
+
 module.exports = router

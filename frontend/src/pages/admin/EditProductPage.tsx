@@ -1,119 +1,110 @@
-import { useNavigate, useParams } from "react-router-dom"
-import { useEffect, useContext, useState} from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useContext, useState } from "react";
 import { ProductContext } from "../../context/ProductContext";
 import toast from "react-hot-toast";
 
-const EditProductPage = ()=> {
-    const navigate = useNavigate()
-    const [formData, setFormData] = useState({
-        title: "",
-        price: "",
-        description: "",
-        image: "",
-        category: "",
-        discount: "",
-        stock: ""
-    })
-    const { id } = useParams();
-    const {product, loading, fetchProduct} = useContext(ProductContext);
+const EditProductPage = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    title: "",
+    price: "",
+    description: "",
+    category: "",
+    discount: "",
+    stock: "",
+  });
 
-    useEffect(()=> {
-       if(id) {
-            fetchProduct(id)
-        }
-    }, [id]);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
-    useEffect(()=> {
-        if(product){
-            setFormData({
-                title:
+  const [imageUrl, setImageUrl] = useState("");
 
-                product.title,
+  const [imageTab, setImageTab] = useState<"file" | "url">("file");
 
-                price:
+  const [imagePreview, setImagePreview] = useState("");
+  
+  const { id } = useParams();
+  const { product, loading, fetchProduct } = useContext(ProductContext);
 
-                product.price,
-
-                description:
-
-                product.description,
-
-                image:
-
-                product.image,
-
-                category:
-
-                product.category,
-
-                discount:
-
-                product.discount,
-
-                stock:
-
-                product.stock
-
-            })
-        }
-    }, [product]);
-
-    const handleSubmit = async(e: React.FormEvent)=> {
-
-        e.preventDefault();
-
-        try {
-            const res = await fetch(`http://localhost:3000/api/products/update/${id}`,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    credentials: "include",
-                    body: JSON.stringify(formData)
-                }
-            )
-
-            const data = await res.json();
-
-            if(data.success){
-                toast.success(
-                    "Updated"
-                )
-                navigate("/admin/products")
-            } else {
-                toast.error("Error updating product")
-            }
-        } catch (error) {
-            console.log(error)
-        }
+  useEffect(() => {
+    if (id) {
+      fetchProduct(id);
     }
+  }, [id]);
 
-    const handleChange = (e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=> {
-        setFormData({
-            ...formData,
-            [e.target.name] : e.target.value,
-        })
+  useEffect(() => {
+    if (product) {
+      setFormData({
+        title: product.title,
+
+        price: product.price,
+
+        description: product.description,
+
+        image: product.image,
+
+        category: product.category,
+
+        discount: product.discount,
+
+        stock: product.stock,
+      });
     }
+  }, [product]);
 
-    if(loading){
-        return (
-            <div>
-                Loading...
-            </div>
-        )
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch(
+        `http://localhost:3000/api/products/update/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(formData),
+        },
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+        toast.success("Updated");
+        navigate("/admin/products");
+      } else {
+        toast.error("Error updating product");
+      }
+    } catch (error) {
+      console.log(error);
     }
+  };
 
-    return (
-        <div className="
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div
+      className="
 
         max-w-4xl
 
         mx-auto
 
-        ">
-
-            <h1 className="
+        "
+    >
+      <h1
+        className="
 
             text-4xl
 
@@ -121,33 +112,26 @@ const EditProductPage = ()=> {
 
             mb-2
 
-            ">
+            "
+      >
+        Edit Product
+      </h1>
 
-                Edit Product
-
-            </h1>
-
-            <p className="
+      <p
+        className="
 
             text-gray-500
 
             mb-10
 
-            ">
+            "
+      >
+        Update this product
+      </p>
 
-                Update this product 
-
-            </p>
-
-            <form
-
-                onSubmit={
-
-                    handleSubmit
-
-                }
-
-                className="
+      <form
+        onSubmit={handleSubmit}
+        className="
 
                 bg-white
 
@@ -162,32 +146,16 @@ const EditProductPage = ()=> {
                 space-y-6
 
                 "
+      >
+        {/* TITLE */}
 
-            >
-
-                {/* TITLE */}
-
-                <input
-
-                    type="text"
-
-                    name="title"
-
-                    placeholder="Product title"
-
-                    value={
-
-                        formData.title
-
-                    }
-
-                    onChange={
-
-                        handleChange
-
-                    }
-
-                    className="
+        <input
+          type="text"
+          name="title"
+          placeholder="Product title"
+          value={formData.title}
+          onChange={handleChange}
+          className="
 
                     w-full
 
@@ -198,32 +166,17 @@ const EditProductPage = ()=> {
                     rounded-xl
 
                     "
+        />
 
-                />
+        {/* PRICE */}
 
-                {/* PRICE */}
-
-                <input
-
-                    type="number"
-
-                    name="price"
-
-                    placeholder="Price"
-
-                    value={
-
-                        formData.price
-
-                    }
-
-                    onChange={
-
-                        handleChange
-
-                    }
-
-                    className="
+        <input
+          type="number"
+          name="price"
+          placeholder="Price"
+          value={formData.price}
+          onChange={handleChange}
+          className="
 
                     w-full
 
@@ -234,32 +187,17 @@ const EditProductPage = ()=> {
                     rounded-xl
 
                     "
+        />
 
-                />
+        {/* CATEGORY */}
 
-                {/* CATEGORY */}
-
-                <input
-
-                    type="text"
-
-                    name="category"
-
-                    placeholder="Category"
-
-                    value={
-
-                        formData.category
-
-                    }
-
-                    onChange={
-
-                        handleChange
-
-                    }
-
-                    className="
+        <input
+          type="text"
+          name="category"
+          placeholder="Category"
+          value={formData.category}
+          onChange={handleChange}
+          className="
 
                     w-full
 
@@ -270,32 +208,17 @@ const EditProductPage = ()=> {
                     rounded-xl
 
                     "
+        />
 
-                />
+        {/* IMAGE */}
 
-                {/* IMAGE */}
-
-                <input
-
-                    type="text"
-
-                    name="image"
-
-                    placeholder="Image URL"
-
-                    value={
-
-                        formData.image
-
-                    }
-
-                    onChange={
-
-                        handleChange
-
-                    }
-
-                    className="
+        <input
+          type="text"
+          name="image"
+          placeholder="Image URL"
+          value={formData.image}
+          onChange={handleChange}
+          className="
 
                     w-full
 
@@ -306,32 +229,17 @@ const EditProductPage = ()=> {
                     rounded-xl
 
                     "
+        />
 
-                />
+        {/* DISCOUNT */}
 
-                {/* DISCOUNT */}
-
-                <input
-
-                    type="number"
-
-                    name="discount"
-
-                    placeholder="Discount %"
-
-                    value={
-
-                        formData.discount
-
-                    }
-
-                    onChange={
-
-                        handleChange
-
-                    }
-
-                    className="
+        <input
+          type="number"
+          name="discount"
+          placeholder="Discount %"
+          value={formData.discount}
+          onChange={handleChange}
+          className="
 
                     w-full
 
@@ -342,32 +250,17 @@ const EditProductPage = ()=> {
                     rounded-xl
 
                     "
+        />
 
-                />
+        {/* STOCK */}
 
-                {/* STOCK */}
-
-                <input
-
-                    type="number"
-
-                    name="stock"
-
-                    placeholder="Stock"
-
-                    value={
-
-                        formData.stock
-
-                    }
-
-                    onChange={
-
-                        handleChange
-
-                    }
-
-                    className="
+        <input
+          type="number"
+          name="stock"
+          placeholder="Stock"
+          value={formData.stock}
+          onChange={handleChange}
+          className="
 
                     w-full
 
@@ -378,30 +271,16 @@ const EditProductPage = ()=> {
                     rounded-xl
 
                     "
+        />
 
-                />
+        {/* DESCRIPTION */}
 
-                {/* DESCRIPTION */}
-
-                <textarea
-
-                    name="description"
-
-                    placeholder="Description"
-
-                    value={
-
-                        formData.description
-
-                    }
-
-                    onChange={
-
-                        handleChange
-
-                    }
-
-                    className="
+        <textarea
+          name="description"
+          placeholder="Description"
+          value={formData.description}
+          onChange={handleChange}
+          className="
 
                     w-full
 
@@ -414,20 +293,12 @@ const EditProductPage = ()=> {
                     h-32
 
                     "
+        />
 
-                />
-
-                <button
-
-                    type="submit"
-
-                    disabled={
-
-                        loading
-
-                    }
-
-                    className="
+        <button
+          type="submit"
+          disabled={loading}
+          className="
 
                     w-full
 
@@ -440,29 +311,12 @@ const EditProductPage = ()=> {
                     rounded-xl
 
                     "
+        >
+          {loading ? "Updating..." : "Update Product"}
+        </button>
+      </form>
+    </div>
+  );
+};
 
-                >
-
-                    {
-
-                        loading
-
-                            ?
-
-                            "Updating..."
-
-                            :
-
-                            "Update Product"
-
-                    }
-
-                </button>
-
-            </form>
-
-        </div>
-    )
-}
-
-export default EditProductPage
+export default EditProductPage;

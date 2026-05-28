@@ -147,9 +147,7 @@ const changeRole = async (req, res) => {
         message: "Invalid role",
       });
     }
-    console.log("user._id:", user._id.toString());
 
-    console.log("req.user:", req.user.toString());
     if (user._id.toString() === req.user._id.toString()) {
       return res.status(400).json({
         success: false,
