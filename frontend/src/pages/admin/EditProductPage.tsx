@@ -18,10 +18,10 @@ const EditProductPage = () => {
 
   const [imageUrl, setImageUrl] = useState("");
 
-  const [imageTab, setImageTab] = useState<"file" | "url">("file");
+  const [imageTab, setImageTab] = useState<"file" | "url">("url");
 
   const [imagePreview, setImagePreview] = useState("");
-  
+
   const { id } = useParams();
   const { product, loading, fetchProduct } = useContext(ProductContext);
 
@@ -40,32 +40,73 @@ const EditProductPage = () => {
 
         description: product.description,
 
-        image: product.image,
-
         category: product.category,
 
         discount: product.discount,
 
         stock: product.stock,
       });
+
+      const existingUrl =
+        typeof product.image === "string" ? product.image : product.image?.url;
+
+      setImageUrl(existingUrl || "");
+      setImagePreview(existingUrl || "");
     }
   }, [product]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const confirmUpdate = window.confirm("Sure you want to update this product?")
+
+    if(!confirmUpdate){
+      return
+    }
+
+    if (imageTab === "file" && !imageFile) {
+      toast.error("Please select an image file");
+      return;
+    }
+    if (imageTab === "url" && !imageUrl) {
+      toast.error("Please enter an image url");
+      return;
+    }
+
     try {
-      const res = await fetch(
-        `http://localhost:3000/api/products/update/${id}`,
-        {
+      let res;
+      if (imageTab === "file" && imageFile) {
+        const data = new FormData();
+
+        data.append("title", formData.title);
+        data.append("price", formData.price);
+        data.append("description", formData.description);
+        data.append("category", formData.category);
+        data.append("discount", formData.discount);
+        data.append("stock", formData.stock);
+        data.append("image", imageFile);
+
+        res = await fetch(`http://localhost:3000/api/products/update/${id}`, {
+          method: "PUT",
+          credentials: "include",
+          body: data,
+        });
+      } else {
+        res = await fetch(`http://localhost:3000/api/products/update/${id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           credentials: "include",
-          body: JSON.stringify(formData),
-        },
-      );
+          body: JSON.stringify({
+            ...formData,
+            price: Number(formData.price),
+            discount: Number(formData.discount),
+            stock: Number(formData.stock),
+            image: imageUrl,
+          }),
+        });
+      }
 
       const data = await res.json();
 
@@ -87,6 +128,27 @@ const EditProductPage = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageFile(file);
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result as string);
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const url = e.target.value;
+
+    setImageUrl(url);
+    setImagePreview(url);
   };
 
   if (loading) {
@@ -212,24 +274,94 @@ const EditProductPage = () => {
 
         {/* IMAGE */}
 
-        <input
-          type="text"
-          name="image"
-          placeholder="Image URL"
-          value={formData.image}
-          onChange={handleChange}
-          className="
+        {/* IMAGE SECTION */}
+        <div>
+          {/* Tab Buttons */}
+          <div className="flex gap-2 mb-3">
+            <button
+              type="button"
+              onClick={() => {
+                setImageTab("file");
+                setImagePreview("");
+              }}
+              className={`px-4 py-2 rounded-xl text-sm font-medium border transition
+        ${
+          imageTab === "file"
+            ? "bg-black text-white border-black"
+            : "bg-white text-gray-500 border-gray-200"
+        }`}
+            >
+              Upload File
+            </button>
 
-                    w-full
+            <button
+              type="button"
+              onClick={() => {
+                setImageTab("url");
+                const existingUrl =
+                  typeof product?.image === "string"
+                    ? product.image
+                    : product?.image?.url;
+                setImagePreview(existingUrl || "");
+                setImageUrl(existingUrl || "");
+              }}
+              className={`px-4 py-2 rounded-xl text-sm font-medium border transition
+        ${
+          imageTab === "url"
+            ? "bg-black text-white border-black"
+            : "bg-white text-gray-500 border-gray-200"
+        }`}
+            >
+              Paste URL
+            </button>
+          </div>
 
-                    border
+          {/* File Upload Area */}
+          {imageTab === "file" && (
+            <div
+              onClick={() => document.getElementById("editFileInput")?.click()}
+              className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center cursor-pointer hover:border-gray-400 transition"
+            >
+              <input
+                type="file"
+                id="editFileInput"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+              {imageFile ? (
+                <p className="text-sm text-gray-600">✅ {imageFile.name}</p>
+              ) : (
+                <p className="text-sm text-gray-400">
+                  Click to upload — JPG, PNG, WEBP (max 5MB)
+                </p>
+              )}
+            </div>
+          )}
 
-                    p-4
+          {/* URL Input */}
+          {imageTab === "url" && (
+            <input
+              type="text"
+              placeholder="https://example.com/image.jpg"
+              value={imageUrl}
+              onChange={handleUrlChange}
+              className="w-full border p-4 rounded-xl"
+            />
+          )}
 
-                    rounded-xl
-
-                    "
-        />
+          {/* Preview */}
+          {imagePreview && (
+            <div className="mt-4 flex justify-center">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="h-40 object-contain rounded-xl border p-2"
+                onError={() => setImagePreview("")}
+              />
+            </div>
+          )}
+        </div>
 
         {/* DISCOUNT */}
 
